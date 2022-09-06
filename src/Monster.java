@@ -1,8 +1,8 @@
 package src;
 
 public class Monster extends LivingGameObject{
-    public Monster(char charRepresentation, char charRepresentation1, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
-        super(charRepresentation, charRepresentation1, name, healthPoints, attackPoints, items, phrases, description);
+    public Monster(char charRepresentation, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
+        super(charRepresentation, name, healthPoints, attackPoints, items, phrases, description);
     }
 
     public String speak() {
