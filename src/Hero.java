@@ -2,8 +2,8 @@ package src;
 
 public class Hero extends LivingGameObject{
 
-    public Hero(char charRepresentation, char charRepresentation1, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
-        super(charRepresentation, charRepresentation1, name, healthPoints, attackPoints, items, phrases, description);
+    public Hero(char charRepresentation, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
+        super(charRepresentation, name, healthPoints, attackPoints, items, phrases, description);
     }
 
     public void pickUpItem(Item item){

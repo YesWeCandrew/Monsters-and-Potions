@@ -2,9 +2,8 @@ package src;
 
 public abstract class LivingGameObject extends GameObject {
 
-    public LivingGameObject(char charRepresentation, char charRepresentation1, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
+    public LivingGameObject(char charRepresentation, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
         super(charRepresentation);
-        this.charRepresentation = charRepresentation1;
         this.name = name;
         this.healthPoints = healthPoints;
         this.attackPoints = attackPoints;
@@ -14,9 +13,6 @@ public abstract class LivingGameObject extends GameObject {
     }
 
 // ATTRIBUTES
-
-
-        private char charRepresentation; // the char representation of the object
 
         private String name; // the name of the object
 
