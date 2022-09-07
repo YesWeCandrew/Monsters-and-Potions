@@ -13,7 +13,7 @@
 ### Task for Ethan
 + Pick a license
 ----
-### Task for Tom
+### Task for Thomas
 + look into CI/CD
 ----
 ### Task for Zayne
