@@ -1,13 +1,15 @@
 package src;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public abstract class LivingGameObject extends GameObject {
 
-    public LivingGameObject(char charRepresentation, String name, int healthPoints, int attackPoints, Item[] items, String[] phrases, String description) {
+    public LivingGameObject(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description) {
         super(charRepresentation);
         this.name = name;
         this.healthPoints = healthPoints;
         this.attackPoints = attackPoints;
-        this.items = items;
         this.phrases = phrases;
         this.description = description;
     }
@@ -19,12 +21,6 @@ public abstract class LivingGameObject extends GameObject {
         private int healthPoints; // the number of health points
         private int attackPoints; // the number of attack points
 
-        /**
-        The items that the object holds. If it is the user/hero, this is the
-        inventory. If it is a monster then it is the items dropped when it is
-        killed.
-         */
-        private Item[] items;
 
         /**
         Things that the living object can say when speak() is called.
@@ -49,10 +45,6 @@ public abstract class LivingGameObject extends GameObject {
             this.attackPoints = attackPoints;
         }
 
-        public void setItems(Item[] items) {
-            this.items = items;
-        }
-
         public void setPhrases(String[] phrases) {
             this.phrases = phrases;
         }
@@ -71,10 +63,6 @@ public abstract class LivingGameObject extends GameObject {
 
         public int getAttackPoints() {
             return attackPoints;
-        }
-
-        public Item[] getItems() {
-            return items;
         }
 
         public String[] getPhrases() {
@@ -122,13 +110,7 @@ public abstract class LivingGameObject extends GameObject {
 
     }
 
-    /**
-    Returns the nth item in the item list.
-     @param n the (0 start) index in the array of the item to return
-     */
-    public Item getItem(int n) {
-        return new Item('*',"FIXME","FIXME","FIXME");
-    }
+
 
 
 
