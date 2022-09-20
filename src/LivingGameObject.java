@@ -1,9 +1,8 @@
-package src;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public abstract class LivingGameObject extends GameObject {
+public abstract class LivingGameObject extends src.GameObject {
 
     public LivingGameObject(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description) {
         super(charRepresentation);
@@ -85,7 +84,18 @@ public abstract class LivingGameObject extends GameObject {
      * the hit caused the object to die (healthPoints <=0)
      */
     public boolean reduceHealth(int x) {
-        return true;
+        // throw an exception if x is negative
+        if (x < 0) {
+            throw new IllegalArgumentException("x must be positive");
+        }
+        else if(healthPoints - x <= 0) {
+            healthPoints = 0;
+            return false;
+        }
+        else {
+            healthPoints -= x;
+            return true;
+        }
     }
 
     /**
@@ -93,6 +103,13 @@ public abstract class LivingGameObject extends GameObject {
      @param x the amount to increase the objects health by
      */
     public void increaseHealth(int x) {
+        // throw an exception if x is negative
+        if (x < 0) {
+            throw new IllegalArgumentException("x must be positive");
+        }
+        else {
+            healthPoints += x;
+        }
     }
 
     /**
@@ -100,6 +117,16 @@ public abstract class LivingGameObject extends GameObject {
      @param x the amount to reduce the objects attackPoints by
      */
     public void reduceAttack(int x) {
+        // throw an exception if x is negative
+        if (x < 0) {
+            throw new IllegalArgumentException("x must be positive");
+        }
+        else if(attackPoints - x <= 0) {
+            attackPoints = 0;
+        }
+        else {
+            attackPoints -= x;
+        }
     }
 
     /**
@@ -107,6 +134,13 @@ public abstract class LivingGameObject extends GameObject {
      @param x the amount to increase the objects attackPoints by
      */
     public void increaseAttack(int x){
+        // throw an exception if x is negative
+        if (x < 0) {
+            throw new IllegalArgumentException("x must be positive");
+        }
+        else {
+            attackPoints += x;
+        }
 
     }
 
