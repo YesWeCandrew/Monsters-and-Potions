@@ -1,21 +1,47 @@
 
 public class Item extends GameObject {
 
-    private String name;
-    private String description;
+    private final String name;
+    private final String description;
 
-    /*
-    We need to decide what kind of actions items should make when they are
-    picked up and how to represent them. For now just bodging it as a string
-    But we should think more about this.
+    /**
+     * This must either be the word health or the word attack. Determines
+     * whether the item will affect the health of the character or the attack
      */
-    private String action;
+    private final actionEffect actionEffects;
 
-    public Item(char charRepresentation, String name, String description, String action) {
+    /**
+     * The amount to increase or decrease the attack or health points of the hero
+     */
+    private final int actionChange;
+
+
+    /**
+     *
+     * @param charRepresentation the character to represent the item
+     * @param name the name of the item
+     * @param description the items description
+     * @param actionEffects either "health" or "attack" anything else will throw error
+     * @param actionChange the amount to change health or attack by (can be negative)
+     */
+    public Item(char charRepresentation, String name, String description, String actionEffects, int actionChange) {
         super(charRepresentation);
         this.name = name;
         this.description = description;
-        this.action = action;
+
+        // must be either attack or health.
+        switch (actionEffects) {
+            case "attack" -> this.actionEffects = actionEffect.attack;
+            case "health" -> this.actionEffects = actionEffect.health;
+            default -> throw new IllegalArgumentException();
+        }
+
+        this.actionChange = actionChange;
+    }
+
+    public enum actionEffect {
+        health,
+        attack
     }
 
     public String getName() {
@@ -26,7 +52,7 @@ public class Item extends GameObject {
         return description;
     }
 
-    public String getAction() {
-        return action;
-    }
+    public int getActionChange() {return actionChange;}
+
+    public actionEffect getActionEffect() {return actionEffects;}
 }

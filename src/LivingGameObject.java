@@ -113,39 +113,22 @@ public abstract class LivingGameObject extends GameObject {
     }
 
     /**
-    Reduces the attack points of the object by the integer x.
-     @param x the amount to reduce the objects attackPoints by
+     Changes the health points of the object by the positive or negative
+     integer x.
+     @param x the amount to change the objects health by
      */
-    public void reduceAttack(int x) {
-        // throw an exception if x is negative
-        if (x < 0) {
-            throw new IllegalArgumentException("x must be positive");
-        }
-        else if(attackPoints - x <= 0) {
-            attackPoints = 0;
-        }
-        else {
-            attackPoints -= x;
-        }
+    public void changeHealth(int x) {
+            healthPoints += x;
     }
 
     /**
-    Increases the health points of the object by the integer x.
-     @param x the amount to increase the objects attackPoints by
+    Changes the attack points of the object by the positive or negative
+     integer x.
+     @param x the amount to change the objects attackPoints by
      */
-    public void increaseAttack(int x){
-        // throw an exception if x is negative
-        if (x < 0) {
-            throw new IllegalArgumentException("x must be positive");
-        }
-        else {
+    public void changeAttack(int x) {
             attackPoints += x;
-        }
-
     }
-
-
-
 
 
 }
