@@ -1,13 +1,12 @@
 
-
 import java.util.ArrayList;
 
 public class Hero extends LivingGameObject{
 
-    private ArrayList<src.Item> items;
-    private int itemsSize;
+    private ArrayList<Item> items;
+    private final int itemsSize;
 
-    public Hero(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, ArrayList<src.Item> items) {
+    public Hero(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, ArrayList<Item> items) {
         super(charRepresentation, name, healthPoints, attackPoints, phrases, description);
         this.items = items;
 
@@ -16,29 +15,68 @@ public class Hero extends LivingGameObject{
         this.itemsSize = 4;
     }
 
-    public boolean pickUpItem(src.Item item){
-        // if duplicate items are allowed
-        return items.add(item);
 
-        // if duplicate items are not allowed
-        /*if (items.contains(item)){
+    /**
+     * Attempts to add the item to the Hero's inventory. If the object can be
+     * added returns true and executes the action described by the object.
+     *
+     * If the object cannot be added (eg. inventory is  full) returns false
+     * @param item the item to add
+     * @return whether the object was successfully added
+     */
+    public boolean pickUpItem(Item item){
+        if (items.size() >= itemsSize) {
             return false;
         }
-        else {
-            return items.add(item);
-        }*/
+
+        // Adding the item to the inventory.
+        items.add(item);
+
+        // Taking the action as described by the items actionEffect and actionChange
+        switch (item.getActionEffect()) {
+            case health -> {
+                this.changeHealth(item.getActionChange());
+            }
+            case attack -> {
+                this.changeAttack(item.getActionChange());
+            }
+        }
+        return true;
     }
 
-    public src.Item discardItem(int x) {
-        return items.remove(x);
+    /**
+     * Removes the item at the xth number of the inventory. Also undoes the
+     * effects on health/armour
+     * @param x the number in the array to remove (starting at 0)
+     * @return the item if it was removed successfully, or null otherwise
+     */
+    public Item discardItem(int x) {
+        Item item;
+        try {
+            item = items.remove(x);
+        } catch (IndexOutOfBoundsException e) {
+            return null;
+        }
+
+        // Undoing the action as described by the items actionEffect and actionChange
+        switch (item.getActionEffect()) {
+            case health -> {
+                this.changeHealth(-item.getActionChange());
+            }
+            case attack -> {
+                this.changeAttack(-item.getActionChange());
+            }
+        }
+
+        return item;
     }
 
     /**
      Returns the nth item in the item list.
      @param n the (0 start) index in the array of the item to return
      */
-    public src.Item getItem(int n) {
-        return new src.Item('*',"FIXME","FIXME","FIXME");
+    public Item getItem(int n) {
+        return this.items.get(n);
     }
 
 

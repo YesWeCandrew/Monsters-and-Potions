@@ -1,4 +1,3 @@
-package src;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -244,6 +243,10 @@ public class Map {
         return map[position.getX()][position.getY()];
     }
 
+    private Position positionInFrontOfHero() {
+        return heroPositionReference.positionInFront(heroFacing);
+    }
+
     /**
      * Sets the provided object at the given position.
      * Will return true if the object was successfully placed
@@ -331,20 +334,18 @@ public class Map {
      * false
      */
     public boolean moveHero() {
-        // The position to try to move the hero to
-        Position moveTo = heroPositionReference.positionInFront(heroFacing);
 
         // If the position is empty (it exists, and it does not already have
         // an object
-        if (isEmpty(moveTo)) {
+        if (isEmpty(positionInFrontOfHero())) {
             // Copy the hero to that point in the array
-            setObjectAt(moveTo,getObjectAt(heroPositionReference));
+            setObjectAt(positionInFrontOfHero(),getObjectAt(heroPositionReference));
 
             // Remove the hero from its original position
             clearPosition(heroPositionReference);
 
             // change the hero pointer to the hero's new position
-            heroPositionReference = moveTo;
+            heroPositionReference = positionInFrontOfHero();
 
             return true;
         } else {
@@ -395,12 +396,34 @@ public class Map {
      */
     public boolean pickUpItem() {
         try {
-            Item item = (Item) getObjectAt(heroPositionReference.positionInFront(heroFacing));
-            ((Hero) getObjectAt(heroPositionReference)).pickUpItem(item);
-            return true;
+            Item item = (Item) getObjectAt(positionInFrontOfHero());
+            return getHero().pickUpItem(item);
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Discards the item at the nth index of the Hero's inventory and places it
+     * on the map in front of the hero.
+     *
+     * Returns true if successfully discarded. Will return false if:
+     * - There is no object at that index in the array, or
+     * - There is no position in front of the hero (is the edge of the map), or
+     * - There is an object already in that place,
+     * @param n the number of the item to discard (starting at 0)
+     * @return whether the item could be discarded
+     */
+    public boolean discardItem(int n) {
+        if (isEmpty(positionInFrontOfHero())) {
+           Item item = getHero().discardItem(n);
+           if (item != null) {
+               setObjectAt(positionInFrontOfHero(),item);
+               return true;
+           }
+        }
+
+        return false;
     }
 
     /**
@@ -413,7 +436,7 @@ public class Map {
      */
     public boolean attack(){
         try {
-            Position monstersPosition = heroPositionReference.positionInFront(heroFacing);
+            Position monstersPosition = positionInFrontOfHero();
             Monster monster = (Monster) getObjectAt(monstersPosition);
 
             // Reduce the monsters health points by the hero's attack points.
