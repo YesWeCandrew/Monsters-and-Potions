@@ -20,6 +20,18 @@ public class Map {
     }
 
     /**
+     * for testing purposes only
+     *
+     * @param map
+     */
+    public Map(GameObject[][] map, Position heroPos) {
+        this.heroPositionReference = heroPos;
+        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", null);
+        heroFacing = Cardinality.NORTH;
+        this.map = map;
+    }
+
+    /**
     To easily find the player in the map. Is called Reference to just make it
     clear that it is just a reference to the cell in the map that holds the
     Hero object
@@ -38,9 +50,43 @@ public class Map {
      */
     public String displayArea(int x, int y, int size) {
         assert size >= 1;
-        assert x >= 0;
-        assert y >= 0;
-        return "fixme";
+        assert x >= 0 && x <= map.length;
+        assert y >= 0 && y <= map[0].length;
+
+        boolean bordered = true;
+        int d = size * 2 + 1;
+        String area = "", boarderChar = "@", wallChar = String.valueOf(new Wall().getChar());
+        String horizontalBorder = bordered ? boarderChar.repeat(d + 2) : "";
+
+        area += horizontalBorder; // Top Border
+        for(int i = x - size; i >= d; i++) {
+            area += bordered ? boarderChar : ""; // Left Border
+
+
+            for(int j = y - size; j >= d; j++)
+                area += i < 0 ? wallChar :
+                        j < 0 ? wallChar :
+                        i > map.length ? wallChar :
+                        j > map[0].length ? wallChar :
+                        map[j][i].getChar();
+
+            area += (bordered ? boarderChar : "") + System.lineSeparator(); // Right Border + New Line
+        }
+        area += horizontalBorder; // Bottom Border
+
+        return area;
+    }
+
+    public int getWidth() {
+        return map.length;
+    }
+
+    public int getHeight() {
+        return map[0].length;
+    }
+
+    public Position getHeroPositionReference() {
+        return heroPositionReference;
     }
 
     /**
@@ -66,19 +112,27 @@ public class Map {
      * @return true if successfully placed, otherwise false
      */
     public boolean setObjectAt(Position position, GameObject object) {
-        // Wrapped in try block in case the position is off the board
-        // The assert function also ensures that the catch is called if there
-        // is already an object at that position.
-        try {
-            // Makes sure that the position exists and is empty
-            assert map[position.getX()][position.getY()] == null;
-
+        boolean set = false;
+        if(isEmpty(position)) {
             map[position.getX()][position.getY()] = object;
-            return true;
-
-        } catch (Exception e) {
-            return false;
+            set = true;
         }
+
+        return set;
+
+//        // Wrapped in try block in case the position is off the board
+//        // The assert function also ensures that the catch is called if there
+//        // is already an object at that position.
+//        try {
+//            // Makes sure that the position exists and is empty
+//            assert map[position.getX()][position.getY()] == null;
+//
+//            map[position.getX()][position.getY()] = object;
+//            return true;
+//
+//        } catch (Exception e) {
+//            return false;
+//        }
     }
 
     /**
@@ -105,16 +159,25 @@ public class Map {
      * @return true if an object exists, otherwise false
      */
     public boolean hasObject(Position position) {
-        try {
-            // this line ensures that the program will move to the catch lines
-            // if the position is out of bounds, or if there is not an object.
-            assert map[position.getX()][position.getY()] != null;
-            return true;
+        boolean hasObject = false;
+        int x = position.getX(), y = position.getY();
+        if (x < 0 || y < 0 || x >= map.length || y >= map.length) {
+            hasObject = map[position.getX()][position.getY()] != null;
         }
 
-        catch (Exception e) {
-            return false;
-        }
+        return hasObject;
+
+        // none-functional code
+//        try {
+//            // this line ensures that the program will move to the catch lines
+//            // if the position is out of bounds, or if there is not an object.
+//            assert map[position.getX()][position.getY()] != null;
+//            return true;
+//        }
+//
+//        catch (Exception e) {
+//            return false;
+//        }
     }
 
     /**
@@ -125,11 +188,7 @@ public class Map {
      * @return whether the position is on the board and empty
      */
     public boolean isEmpty(Position position) {
-        if (position.getX() > map.length - 1 | position.getY() > map.length - 1) {
-            return false;
-        } else {
-            return !hasObject(position);
-        }
+        return !hasObject(position);
     }
 
     /**
@@ -252,6 +311,4 @@ public class Map {
     }
 
     public void getHelp(){}
-
-
 }
