@@ -2,7 +2,7 @@
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public abstract class LivingGameObject extends src.GameObject {
+public abstract class LivingGameObject extends GameObject {
 
     public LivingGameObject(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description) {
         super(charRepresentation);

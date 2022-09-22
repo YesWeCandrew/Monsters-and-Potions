@@ -1,4 +1,3 @@
-package src;
 
 /**
  * Walls don't need anything fancy, so all we need to do is just pick a
