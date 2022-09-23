@@ -1,7 +1,5 @@
 package ui;
 
-import src.Position;
-
 public class Separator extends Element {
 
     int x, y, length;

@@ -1,8 +1,9 @@
+package map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.CSVWriter;
-import src.objects.GameObject;
+import objects.*;
 
 import java.io.*;
 import java.util.ArrayList;

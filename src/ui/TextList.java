@@ -1,7 +1,5 @@
 package ui;
 
-import src.ui.Pane;
-
 public class TextList extends Pane {
 
     TextField[] texts;

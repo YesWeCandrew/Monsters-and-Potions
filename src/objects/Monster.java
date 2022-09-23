@@ -1,5 +1,4 @@
-
-import java.util.ArrayList;
+package objects;
 
 public class Monster extends LivingGameObject{
     public Monster(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, Item itemToDrop) {

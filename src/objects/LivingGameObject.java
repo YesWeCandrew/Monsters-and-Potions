@@ -1,5 +1,6 @@
+package objects;
 
-import src.objects.GameObject;
+import objects.GameObject;
 
 public abstract class LivingGameObject extends GameObject {
 

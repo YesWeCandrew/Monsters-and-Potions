@@ -1,7 +1,11 @@
+package main;
 
-import src.objects.GameObject;
-import src.ui.Pane;
-import src.ui.ViewPort;
+import map.Map;
+import map.Position;
+import objects.GameObject;
+import objects.Wall;
+import ui.Pane;
+import ui.ViewPort;
 
 public class Interface {
 
