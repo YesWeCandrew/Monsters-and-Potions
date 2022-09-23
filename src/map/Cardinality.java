@@ -1,3 +1,5 @@
+package map;
+
 public enum Cardinality {
     NORTH,
     EAST,
