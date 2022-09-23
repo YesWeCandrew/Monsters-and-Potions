@@ -1,3 +1,4 @@
+package src.objects;
 
 public abstract class GameObject {
 

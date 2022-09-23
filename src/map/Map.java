@@ -2,6 +2,7 @@
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.CSVWriter;
+import src.objects.GameObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class Map {
      * Constructs a blank game objectMap with walls based on the wall
      * layout of the given map csv file.
      * @param pathToCSV the path to the map csv file
-     * @return the corresponding GameObject map.
+     * @return the corresponding src.objects.GameObject map.
      */
     private static GameObject[][] loadMapFromCSV(String pathToCSV) {
 
@@ -280,10 +281,10 @@ public class Map {
     }
 
     /**
-     * Returns the GameObject in the map at the provided position
+     * Returns the src.objects.GameObject in the map at the provided position
      * @param position the position to return the object of
      * @throws ArrayIndexOutOfBoundsException if the position is out of bounds.
-     * @return the GameObject at the given position
+     * @return the src.objects.GameObject at the given position
      */
     public GameObject getObjectAt(Position position) throws ArrayIndexOutOfBoundsException {
         return map[position.getX()][position.getY()];

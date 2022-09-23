@@ -1,3 +1,4 @@
+import src.objects.GameObject;
 
 public class Item extends GameObject {
 

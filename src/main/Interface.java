@@ -1,5 +1,5 @@
-package src;
 
+import src.objects.GameObject;
 import src.ui.Pane;
 import src.ui.ViewPort;
 

@@ -1,4 +1,4 @@
-package src.ui;
+package ui;
 
 import src.GameObject;
 import src.Map;

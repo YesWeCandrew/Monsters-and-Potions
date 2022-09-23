@@ -1,4 +1,4 @@
-package src.ui;
+package ui;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,7 @@ public class Pane extends Element {
 
     }
 
-    public void addElement(Element element) {
+    public void addElement(ui.Element element) {
         elements.add(element);
     }
 
