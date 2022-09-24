@@ -1,9 +1,9 @@
-package src.ui;
+package ui;
 
-import src.GameObject;
-import src.Map;
-import src.Position;
-import src.Wall;
+import map.Map;
+import map.Position;
+import objects.GameObject;
+import objects.Wall;
 
 public class ViewPort extends Element {
 

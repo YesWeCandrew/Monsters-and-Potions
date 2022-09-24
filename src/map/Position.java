@@ -1,3 +1,4 @@
+package map;
 
 /**
 This class allows us to store the position of important GameObjects, like the

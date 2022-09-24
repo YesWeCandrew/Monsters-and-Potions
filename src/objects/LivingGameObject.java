@@ -1,6 +1,6 @@
+package objects;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+import objects.GameObject;
 
 public abstract class LivingGameObject extends GameObject {
 

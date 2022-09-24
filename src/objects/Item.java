@@ -1,3 +1,6 @@
+package objects;
+
+import objects.GameObject;
 
 public class Item extends GameObject {
 

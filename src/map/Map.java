@@ -1,7 +1,9 @@
+package map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.CSVWriter;
+import objects.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,6 +11,13 @@ import java.util.List;
 
 public class Map {
 
+    /**
+     To easily find the player in the map. Is called Reference to just make it
+     clear that it is just a reference to the cell in the map that holds the
+     Hero object
+     */
+    private Position heroPositionReference;
+    private Cardinality heroFacing;
     /**
     The map which is an array of arrays of GameObjects.
     X = column
@@ -20,6 +29,7 @@ public class Map {
     private static final short size = 8;
     private static final String WALL_CHARACTER = "X";
     private static final String VACANT_CHARACTER = "_";
+
     /**
      * Generates the Map (and all the other objects using their relevant
      * constructors), using the csv and JSON (or other file type tbd) provided
@@ -31,6 +41,18 @@ public class Map {
         GameObject[][] initialMap =  loadMapFromCSV(pathToCSV);
         map = loadEntitiesFromJSON(initialMap,pathToJSON);
 
+    }
+
+    /**
+     * for testing purposes only
+     *
+     * @param map
+     */
+    public Map(GameObject[][] map, Position heroPos) {
+        this.heroPositionReference = heroPos;
+        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", null);
+        heroFacing = Cardinality.NORTH;
+        this.map = map;
     }
 
     private GameObject[][] loadEntitiesFromJSON(GameObject[][] initialMap, String pathToJSON) {
@@ -100,7 +122,7 @@ public class Map {
      * Constructs a blank game objectMap with walls based on the wall
      * layout of the given map csv file.
      * @param pathToCSV the path to the map csv file
-     * @return the corresponding GameObject map.
+     * @return the corresponding src.objects.GameObject map.
      */
     private static GameObject[][] loadMapFromCSV(String pathToCSV) {
 
@@ -210,27 +232,6 @@ public class Map {
     }
 
     /**
-     * for testing purposes only
-     *
-     * @param map
-     */
-    public Map(GameObject[][] map, Position heroPos) {
-        this.heroPositionReference = heroPos;
-        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", null);
-        heroFacing = Cardinality.NORTH;
-        this.map = map;
-    }
-
-    /**
-    To easily find the player in the map. Is called Reference to just make it
-    clear that it is just a reference to the cell in the map that holds the
-    Hero object
-     */
-    private Position heroPositionReference;
-
-    private Cardinality heroFacing;
-
-    /**
      * Returns the GameState as a string ready to display in terminal
      * @param x the x coordinate of the middle cell to be displayed
      * @param y the y coordinate of the middle cell to be displayed
@@ -280,10 +281,10 @@ public class Map {
     }
 
     /**
-     * Returns the GameObject in the map at the provided position
+     * Returns the src.objects.GameObject in the map at the provided position
      * @param position the position to return the object of
      * @throws ArrayIndexOutOfBoundsException if the position is out of bounds.
-     * @return the GameObject at the given position
+     * @return the src.objects.GameObject at the given position
      */
     public GameObject getObjectAt(Position position) throws ArrayIndexOutOfBoundsException {
         return map[position.getX()][position.getY()];
