@@ -63,9 +63,9 @@ public class Map {
         //Go through file.
 
 
-        Hero hero = new Hero('H',"Jeff",100,100,null,null,"A hero.");
+        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
         String jsonObject = writeJSONObject(hero);
-        Hero hero2 = new Hero('H',"Greg",200,100,null,null,"A greg.");
+        Hero hero2 = new Hero('H',"Greg",200,100,null,null,null);
         String jsonObject2 = writeJSONObject(hero);
 
         String finalJson = jsonObject+jsonObject2;
