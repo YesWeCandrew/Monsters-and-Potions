@@ -12,7 +12,6 @@ import org.json.simple.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class Map {
 
@@ -142,26 +141,43 @@ public class Map {
             createJSONItem(items.get(i),itemPositions.get(i));
         }
 
+        //Write to file.
 
-        //Create a new file with the inputted file name, and write the array of json objects to file.
-        try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//" +fileName+".json")) {
-            file.write(jsonElements.toJSONString());
-            file.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
-    private static JSONObject createJSONHero(Hero hero,Position position){
-        return null;
+    private static JSONObject createJSONHero(Hero hero, Position position){
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",hero.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(hero.getChar()));
+        jsonObject.put("name",hero.getName());
+        jsonObject.put("healthPoints",hero.getHealthPoints());
+        jsonObject.put("attackPoints",hero.getAttackPoints());
+        jsonObject.put("phrases",hero.getPhrases());
+        jsonObject.put("description",hero.getDescription());
+        // jsonObject.put("items",hero.getItems());
+        return jsonObject;
     }
 
     private static JSONObject createJSONMonster(Monster monster, Position position){
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",monster.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(monster.getChar()));
+        jsonObject.put("name",monster.getName());
+        jsonObject.put("healthPoints",monster.getHealthPoints());
+        jsonObject.put("attackPoints",monster.getAttackPoints());
+        jsonObject.put("phrases",monster.getPhrases());
+        jsonObject.put("description",monster.getDescription());
+        // jsonObject.put("items",monster.getItems());
+        return jsonObject;
     }
 
-    private static JSONObject createJSONItem(Item item,Position position){
+    private static JSONObject createJSONItem(Item item, Position position){
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",item.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(item.getChar()));
+        jsonObject.put("name",item.getName());
+
         return null;
     }
     private static void writeHeroToFile(){
@@ -239,6 +255,7 @@ public class Map {
      */
     private static GameObject[][] loadMapFromCSV(String pathToCSV) {
 
+
         //Declare restricted size of the map
         GameObject[][] returnMap = new GameObject[size][size];
 
@@ -273,6 +290,20 @@ public class Map {
         {
             e.printStackTrace();
         }
+
+//        //Printing out test map
+//        for (int i = 0; i < map.length; i++) {
+//            for (int j = 0; j < map.length; j++) {
+//                if(map[j][i] instanceof Wall){
+//                    System.out.print("X");
+//                } else{
+//                    System.out.print("_");
+//                }
+//                if(j ==7){
+//                    System.out.println("");
+//                }
+//            }
+//        }
 
         return returnMap;
     }
