@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.opencsv.CSVWriter;
 import objects.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -87,8 +89,20 @@ public class Map {
             e.printStackTrace();
         }
     }
+    private void writeHeroToFile(Hero hero){
+        JSONObject heroDetails = new JSONObject();
+        heroDetails.put(hero, new Hero('H',"Jeff",100,100,null,null,null));
+        JSONArray heroList = new JSONArray();
+        heroList.add(heroDetails);
 
-
+        // write JSON to file
+        try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//newJsonFile.json")) {
+            file.write(heroList.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private String writeJSONObject(GameObject object){
