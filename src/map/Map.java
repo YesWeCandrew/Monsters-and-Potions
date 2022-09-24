@@ -2,6 +2,7 @@ package map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import objects.*;
@@ -11,6 +12,7 @@ import org.json.simple.JSONObject;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class Map {
 
@@ -79,33 +81,87 @@ public class Map {
         return retMap;
     }
 
-    private void writeJSONTOFile(String json){
+    /**
+     Collects the attributes and positions for each GameObject
+     on the map, transforms and saves a new JSON file to local storage,
+     named with the given fileName.
+     @author Ethan Teber-Rossi
+     @author ..........
+     @param fileName the name of the new JSON file.
+     */
+    private void writeJSONTOFile(String fileName){
         //Collect items, monsters, hero on board put them into array list.
         ArrayList <GameObject> gameObjects = new ArrayList<>();
 
-        //Convert objects into JsonObject and place them into a JSONArray.
-        for (GameObject gameObject: gameObjects
-             ) {
-            //if item, if hero, if its monster
-            //convert object
-            //place in array
+        Hero hero = null;
+        Position heroPosition = null;
+
+        ArrayList<Monster> monsters = new ArrayList<>();
+        ArrayList<Position> monsterPositions = new ArrayList<>();
+
+        ArrayList<Item> items = new ArrayList<>();
+        ArrayList<Position> itemPositions = new ArrayList<>();
+
+        for (int i = 0; i < size; i++) {
+            //Construct the CSV row.
+            for (int j = 0; j < size; j++) {
+
+                // TODO: 24/09/2022   switch statement this
+                //CASE: Hero
+                if (map[j][i] instanceof Hero) {
+                 hero = (Hero) map[j][i];
+                 heroPosition = new Position(i,j);
+                }
+                //CASE: Monster
+                else if (map[j][i] instanceof Monster) {
+                  Monster monster = (Monster) map[j][i];
+                  monsterPositions.add(new Position(i,j));
+                }
+                //CASE: Item:
+                else if (map[j][i] instanceof Item) {
+                    Item item = (Item) map[j][i];
+                    itemPositions.add(new Position(i,j));
+                }
+            }
+        }
+
+        JSONArray jsonElements = new JSONArray();
+
+        //Create hero json object.
+        if(hero == null){
+            // TODO: 24/09/2022 THROW ERROR?
+        } else{
+            createJSONHero(hero,heroPosition);
+        }
+        //Create monster json objects;
+        for (int i = 0; i < monsters.size(); i++) {
+            createJSONMonster(monsters.get(i), monsterPositions.get(i));
+        }
+        //Create items json objects.
+        for (int i = 0; i < items.size(); i++) {
+            createJSONItem(items.get(i),itemPositions.get(i));
         }
 
 
-        //Write to file.
-
+        //Create a new file with the inputted file name, and write the array of json objects to file.
+        try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//" +fileName+".json")) {
+            file.write(jsonElements.toJSONString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private static JSONObject createJSONHero(Hero hero){
+    private static JSONObject createJSONHero(Hero hero,Position position){
         return null;
     }
 
-    private static JSONObject createJSONMonster(Monster monster){
+    private static JSONObject createJSONMonster(Monster monster, Position position){
         return null;
     }
 
-    private static JSONObject createJSONItem(Item item){
+    private static JSONObject createJSONItem(Item item,Position position){
         return null;
     }
     private static void writeHeroToFile(){
@@ -183,7 +239,6 @@ public class Map {
      */
     private static GameObject[][] loadMapFromCSV(String pathToCSV) {
 
-
         //Declare restricted size of the map
         GameObject[][] returnMap = new GameObject[size][size];
 
@@ -218,20 +273,6 @@ public class Map {
         {
             e.printStackTrace();
         }
-
-//        //Printing out test map
-//        for (int i = 0; i < map.length; i++) {
-//            for (int j = 0; j < map.length; j++) {
-//                if(map[j][i] instanceof Wall){
-//                    System.out.print("X");
-//                } else{
-//                    System.out.print("_");
-//                }
-//                if(j ==7){
-//                    System.out.println("");
-//                }
-//            }
-//        }
 
         return returnMap;
     }
