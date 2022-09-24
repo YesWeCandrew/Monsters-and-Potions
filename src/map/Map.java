@@ -2,6 +2,7 @@ package map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import objects.*;
 import org.json.simple.JSONArray;
@@ -79,21 +80,60 @@ public class Map {
     }
 
     private void writeJSONTOFile(String json){
-        GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
-        Gson gson = builder.create();
-        try (FileWriter writer = new FileWriter(SAVE_FILE_PATH+"//newJsonFile.json")) {
-            gson.toJson(json, writer);
-            System.out.println("Written!");
+        //Collect items, monsters, hero on board put them into array list.
+        ArrayList <GameObject> gameObjects = new ArrayList<>();
+
+        //Convert objects into JsonObject and place them into a JSONArray.
+        for (GameObject gameObject: gameObjects
+             ) {
+            //if item, if hero, if its monster
+            //convert object
+            //place in array
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+
+        //Write to file.
+
     }
-    private void writeHeroToFile(Hero hero){
+
+
+    private static JSONObject createJSONHero(Hero hero){
+        return null;
+    }
+
+    private static JSONObject createJSONMonster(Monster monster){
+        return null;
+    }
+
+    private static JSONObject createJSONItem(Item item){
+        return null;
+    }
+    private static void writeHeroToFile(){
         JSONObject heroDetails = new JSONObject();
-        heroDetails.put(hero, new Hero('H',"Jeff",100,100,null,null,null));
+        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
+        heroDetails.put("PositionX",0);
+        heroDetails.put("PositionY",0);
+        heroDetails.put("charRepresenation",String.valueOf(hero.getChar()));
+        heroDetails.put("name",hero.getName());
+        heroDetails.put("healthPoints:",hero.getHealthPoints());
+        heroDetails.put("attackPoints",hero.getAttackPoints());
+        heroDetails.put("phrases",hero.getPhrases());
+        heroDetails.put("description",hero.getDescription());
+        //Collect array.
+        JSONArray heroItemlist = new JSONArray();
+//        for (Item item:
+//             hero.items) {
+//            heroItemlist.add("msg 1");
+//            heroItemlist.add("msg 2");
+//            heroItemlist.add("msg 3");
+//        }
+
+        //heroDetails.put("items",hero.getItem(0));
         JSONArray heroList = new JSONArray();
-        heroList.add(heroDetails);
+        JSONObject hero1 = new JSONObject();
+        hero1.put("myHero",heroDetails);
+
+        heroList.add(hero1);
 
         // write JSON to file
         try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//newJsonFile.json")) {
@@ -130,6 +170,7 @@ public class Map {
         //readJSON("newJsonFile");
         map = loadMapFromCSV("dummySave");
         saveMapCSV("greg");
+        writeHeroToFile();
 
     }
 
