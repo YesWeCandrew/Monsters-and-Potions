@@ -98,14 +98,37 @@ public class Map {
 
 
     private static JSONObject createJSONHero(Hero hero){
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",hero.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(hero.getChar()));
+        jsonObject.put("name",hero.getName());
+        jsonObject.put("healthPoints",hero.getHealthPoints());
+        jsonObject.put("attackPoints",hero.getAttackPoints());
+        jsonObject.put("phrases",hero.getPhrases());
+        jsonObject.put("description",hero.getDescription());
+        // jsonObject.put("items",hero.getItems());
+        return jsonObject;
     }
 
     private static JSONObject createJSONMonster(Monster monster){
-        return null;
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",monster.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(monster.getChar()));
+        jsonObject.put("name",monster.getName());
+        jsonObject.put("healthPoints",monster.getHealthPoints());
+        jsonObject.put("attackPoints",monster.getAttackPoints());
+        jsonObject.put("phrases",monster.getPhrases());
+        jsonObject.put("description",monster.getDescription());
+        // jsonObject.put("items",monster.getItems());
+        return jsonObject;
     }
 
     private static JSONObject createJSONItem(Item item){
+        JSONObject jsonObject = new JSONObject();
+        // jsonObject.put("position",item.getPosition());
+        jsonObject.put("charRepresenation",String.valueOf(item.getChar()));
+        jsonObject.put("name",item.getName());
+
         return null;
     }
     private static void writeHeroToFile(){
