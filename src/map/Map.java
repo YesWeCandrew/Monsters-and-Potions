@@ -1,13 +1,11 @@
 package map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.opencsv.CSVWriter;
 import objects.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.text.DateFormat;
@@ -63,16 +61,70 @@ public class Map {
         this.map = map;
     }
 
-    private GameObject[][] loadEntitiesFromJSON(GameObject[][] initialMap, String pathToJSON) {
+    private static GameObject[][] loadEntitiesFromJSON(GameObject[][] initialMap, String pathToJSON) {
         GameObject[][] retMap = initialMap;
 
-        //Load json file
+        //Initialise parser for JSON files.
+        JSONParser jsonParser = new JSONParser();
 
-        //Go through fil
+        try (FileReader reader = new FileReader(SAVE_FILE_PATH+"//"+ pathToJSON+ ".json"))
+        {
+            //Read JSON file
+            Object json = jsonParser.parse(reader);
 
-        //Time to make changes.
+            JSONArray gameObjects = (JSONArray) json;
+            int laugh = 1;
+            //Iterate over employee array
+            for (Object object:
+                 gameObjects) {
+                JSONObject jsonObject = (JSONObject) object;
+                parseGameObject(retMap,jsonObject);
 
+                System.out.println(jsonObject);
+
+
+            }
+
+        } catch (FileNotFoundException | ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return retMap;
+    }
+
+    private static GameObject[][] parseGameObject(GameObject[][] inputMap, JSONObject jsonObject) {
+        String type = jsonObject.toJSONString().substring(2,9);
+        String resultStr = "";
+        //Collect Object type.
+        for (int i=0;i<type.length();i++)
+        {
+            //Determine if character is alphabetical.
+            if (Character.isAlphabetic(type.charAt(i))) //returns true if both conditions returns true
+            {
+                //adding characters into empty string
+                resultStr=resultStr+type.charAt(i);
+            }
+        }
+        switch(resultStr){
+            case "hero":
+                JSONObject heroObject = (JSONObject) jsonObject.get(resultStr);
+                String charRep = (String) jsonObject.get("charRepresentation");
+                String name = jsonObject.get("name").toString();
+                int healthPoints = 0;//(int) jsonObject.get("healthPoints");
+                System.out.println(charRep + name + healthPoints);
+                break;
+            case "monster":
+                JSONObject monsterObject = (JSONObject) jsonObject.get(resultStr);
+                break;
+            case "item":
+                JSONObject itemObject = (JSONObject) jsonObject.get(resultStr);
+                break;
+            default:
+                throw new RuntimeException("Invalid object type");
+        }
+
+        return inputMap;
     }
 
     /**
@@ -137,13 +189,21 @@ public class Map {
         }
 
         //Write to file.
+         writeJSONtoStorage(jsonElements,fileName);
+    }
+
+    /**
+     *
+     * @param json
+     * @param fileName
+     */
+    private static void writeJSONtoStorage(JSONArray json,String fileName){
         try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//"+ fileName+ ".json")) {
-            file.write(jsonElements.toJSONString());
+            file.write(json.toJSONString());
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -266,6 +326,8 @@ public class Map {
         Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
         map [0][1] = item;
         saveGameState(04,"myGame");
+
+        loadEntitiesFromJSON(map,"4-myGame-2022-09-25");
     }
 
 
