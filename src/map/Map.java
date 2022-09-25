@@ -10,7 +10,11 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Map {
@@ -43,14 +47,14 @@ public class Map {
     public Map(String pathToCSV,String pathToJSON) {
 
         GameObject[][] initialMap =  loadMapFromCSV(pathToCSV);
-        map = loadEntitiesFromJSON(initialMap,pathToJSON);
+        initialMap = loadEntitiesFromJSON(initialMap,pathToJSON);
+        map = initialMap;
 
     }
 
     /**
      * for testing purposes only
      *
-     * @param map
      */
     public Map(GameObject[][] map, Position heroPos) {
         this.heroPositionReference = heroPos;
@@ -64,16 +68,7 @@ public class Map {
 
         //Load json file
 
-        //Go through file.
-
-
-        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-        String jsonObject = writeJSONObject(hero);
-        Hero hero2 = new Hero('H',"Greg",200,100,null,null,null);
-        String jsonObject2 = writeJSONObject(hero);
-
-        String finalJson = jsonObject+jsonObject2;
-        writeJSONTOFile(finalJson);
+        //Go through fil
 
         //Time to make changes.
 
@@ -88,10 +83,8 @@ public class Map {
      @author ..........
      @param fileName the name of the new JSON file.
      */
-    private void writeJSONTOFile(String fileName){
+     private static void saveEntitiesToJSON(String fileName){
         //Collect items, monsters, hero on board put them into array list.
-        ArrayList <GameObject> gameObjects = new ArrayList<>();
-
         Hero hero = null;
         Position heroPosition = null;
 
@@ -112,13 +105,14 @@ public class Map {
                  heroPosition = new Position(i,j);
                 }
                 //CASE: Monster
-                else if (map[j][i] instanceof Monster) {
-                  Monster monster = (Monster) map[j][i];
+                else if (map[j][i] instanceof Monster monster) {
+                    monsters.add(monster);
                   monsterPositions.add(new Position(i,j));
                 }
                 //CASE: Item:
                 else if (map[j][i] instanceof Item) {
                     Item item = (Item) map[j][i];
+                    items.add(item);
                     itemPositions.add(new Position(i,j));
                 }
             }
@@ -128,122 +122,150 @@ public class Map {
 
         //Create hero json object.
         if(hero == null){
-            // TODO: 24/09/2022 THROW ERROR?
+            throw new RuntimeException("Writing JSON file failed: no hero found on board.");
         } else{
-            createJSONHero(hero,heroPosition);
+            jsonElements.add(createJSONHero(hero,heroPosition));
         }
         //Create monster json objects;
         for (int i = 0; i < monsters.size(); i++) {
-            createJSONMonster(monsters.get(i), monsterPositions.get(i));
+            jsonElements.add(createJSONMonster(monsters.get(i), monsterPositions.get(i)));
         }
         //Create items json objects.
         for (int i = 0; i < items.size(); i++) {
-            createJSONItem(items.get(i),itemPositions.get(i));
+            JSONObject itemObject = createJSONItem(items.get(i),itemPositions.get(i));
+            jsonElements.add(itemObject);
         }
 
         //Write to file.
-
-    }
-
-
-    private static JSONObject createJSONHero(Hero hero, Position position){
-        JSONObject jsonObject = new JSONObject();
-        // jsonObject.put("position",hero.getPosition());
-        jsonObject.put("charRepresenation",String.valueOf(hero.getChar()));
-        jsonObject.put("name",hero.getName());
-        jsonObject.put("healthPoints",hero.getHealthPoints());
-        jsonObject.put("attackPoints",hero.getAttackPoints());
-        jsonObject.put("phrases",hero.getPhrases());
-        jsonObject.put("description",hero.getDescription());
-        // jsonObject.put("items",hero.getItems());
-        return jsonObject;
-    }
-
-    private static JSONObject createJSONMonster(Monster monster, Position position){
-        JSONObject jsonObject = new JSONObject();
-        // jsonObject.put("position",monster.getPosition());
-        jsonObject.put("charRepresenation",String.valueOf(monster.getChar()));
-        jsonObject.put("name",monster.getName());
-        jsonObject.put("healthPoints",monster.getHealthPoints());
-        jsonObject.put("attackPoints",monster.getAttackPoints());
-        jsonObject.put("phrases",monster.getPhrases());
-        jsonObject.put("description",monster.getDescription());
-        // jsonObject.put("items",monster.getItems());
-        return jsonObject;
-    }
-
-    private static JSONObject createJSONItem(Item item, Position position){
-        JSONObject jsonObject = new JSONObject();
-        // jsonObject.put("position",item.getPosition());
-        jsonObject.put("charRepresenation",String.valueOf(item.getChar()));
-        jsonObject.put("name",item.getName());
-
-        return null;
-    }
-    private static void writeHeroToFile(){
-        JSONObject heroDetails = new JSONObject();
-        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-        heroDetails.put("PositionX",0);
-        heroDetails.put("PositionY",0);
-        heroDetails.put("charRepresenation",String.valueOf(hero.getChar()));
-        heroDetails.put("name",hero.getName());
-        heroDetails.put("healthPoints:",hero.getHealthPoints());
-        heroDetails.put("attackPoints",hero.getAttackPoints());
-        heroDetails.put("phrases",hero.getPhrases());
-        heroDetails.put("description",hero.getDescription());
-        //Collect array.
-        JSONArray heroItemlist = new JSONArray();
-//        for (Item item:
-//             hero.items) {
-//            heroItemlist.add("msg 1");
-//            heroItemlist.add("msg 2");
-//            heroItemlist.add("msg 3");
-//        }
-
-        //heroDetails.put("items",hero.getItem(0));
-        JSONArray heroList = new JSONArray();
-        JSONObject hero1 = new JSONObject();
-        hero1.put("myHero",heroDetails);
-
-        heroList.add(hero1);
-
-        // write JSON to file
-        try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//newJsonFile.json")) {
-            file.write(heroList.toJSONString());
+        try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//"+ fileName+ ".json")) {
+            file.write(jsonElements.toJSONString());
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    /**
+     Constructs a JSON Object from a Hero Object,
+     including its attributes and its position on the board.
+     @author Ethan Teber-Rossi
+     @author ..........
+     *
+     * @param hero the hero object on the board.
+     * @param position the position of the hero object on the board.
+     * @return The JSON Encoding of the hero object.
+     */
+    private static JSONObject createJSONHero(Hero hero, Position position){
+        //Place the hero attributes & its position into a JSON Object.
+        JSONObject heroAttributes = new JSONObject();
+        heroAttributes.put("position",position.getX() + ", "+ position.getY());
+        heroAttributes.put("charRepresentation",String.valueOf(hero.getChar()));
+        heroAttributes.put("name",hero.getName());
+        heroAttributes.put("healthPoints",hero.getHealthPoints());
+        heroAttributes.put("attackPoints",hero.getAttackPoints());
+        heroAttributes.put("phrases",hero.getPhrases());
+        heroAttributes.put("description",hero.getDescription());
+        // jsonObject.put("items",hero.getItems());
+
+        //Construct the nested hero JSON Object.
+        JSONObject jsonHero = new JSONObject();
+        String heroPlaceHolder = "hero";
+        jsonHero.put(heroPlaceHolder,heroAttributes);
+        return jsonHero;
     }
 
 
-    private String writeJSONObject(GameObject object){
-        GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
-        Gson gson = builder.create();
-        String json = gson.toJson(object);
-        return json;
+    /**
+     *
+     * @param monster
+     * @param position
+     * @return
+     */
+    private static JSONObject createJSONMonster(Monster monster, Position position){
+        //Place the monster attributes & its position into a JSON Object.
+        JSONObject monsterDetails = new JSONObject();
+        monsterDetails.put("position",position.getX() + ", "+ position.getY());
+        monsterDetails.put("charRepresentation",String.valueOf(monster.getChar()));
+        monsterDetails.put("name",monster.getName());
+        monsterDetails.put("healthPoints",monster.getHealthPoints());
+        monsterDetails.put("attackPoints",monster.getAttackPoints());
+        monsterDetails.put("phrases",monster.getPhrases());
+        monsterDetails.put("description",monster.getDescription());
+        // jsonObject.put("items",monster.getItems());
+
+        //Construct the nested monster JSON Object.
+        JSONObject jsonMonster = new JSONObject();
+        String monsterPlaceHolder = "monster";
+        jsonMonster.put(monsterPlaceHolder,monsterDetails);
+
+        return jsonMonster;
     }
 
-    public static String readJSON(String filePath){
-        Gson gson = new Gson();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(SAVE_FILE_PATH + "//" + filePath+".json"));
-            String result = gson.toJson(br);
-            return result;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    private static JSONObject createJSONItem(Item item, Position position){
+        JSONObject itemAttributes = new JSONObject();
+        itemAttributes.put("position",position.getX() + ", "+ position.getY());
+        itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
+        itemAttributes.put("name",item.getName());
+
+        //Construct the nested item JSON Object.
+        JSONObject jsonItem = new JSONObject();
+        String itemPlaceHolder = "item";
+        jsonItem.put(itemPlaceHolder,itemAttributes);
+
+        return jsonItem;
+    }
+
+    /**
+     * Saves the current game state to file.
+     * This process saves a csv file to store the map
+     * with a json file to store the entities.
+     * @param id the primary key of the file.
+     * @param saveFileName the name of the save file.
+     * @ return true if successful.
+     */
+    private static boolean saveGameState(int id,String saveFileName){
+        //Validate ID and saveFileName inputs
+        if (id < 0){
+            throw new RuntimeException("ID must be a positive integer.");
         }
-        return null;
+        if (saveFileName == null || saveFileName.length() == 0 || saveFileName.isBlank()) {
+            throw new RuntimeException("saveFileName cannot be blank.");
+        }
+
+        //Obtain the date
+        Date date = Calendar.getInstance().getTime();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String strDate = dateFormat.format(date);
+        //Construct the saveFileName
+        String splitBy = "-";
+        String fileNameDescriptor = id + splitBy + saveFileName + splitBy +strDate;
+        if(map == null){
+            throw new RuntimeException("Map does not exist.");
+        }
+        //Save the map.
+        saveMapCSV(fileNameDescriptor);
+        //Save the entities.
+        saveEntitiesToJSON(fileNameDescriptor);
+
+        return true;
     }
+
 
 
     public static void main(String[] args) {
         new Map("dummySave","");
         //readJSON("newJsonFile");
         map = loadMapFromCSV("dummySave");
-        saveMapCSV("greg");
-        writeHeroToFile();
-
+        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
+        map[2][3] = hero;
+        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
+        map [4][5] = monster;
+        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
+        map [4][6] = item;
+        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
+        map [0][1] = item;
+        saveGameState(04,"myGame");
     }
 
 
@@ -290,20 +312,6 @@ public class Map {
         {
             e.printStackTrace();
         }
-
-//        //Printing out test map
-//        for (int i = 0; i < map.length; i++) {
-//            for (int j = 0; j < map.length; j++) {
-//                if(map[j][i] instanceof Wall){
-//                    System.out.print("X");
-//                } else{
-//                    System.out.print("_");
-//                }
-//                if(j ==7){
-//                    System.out.println("");
-//                }
-//            }
-//        }
 
         return returnMap;
     }
