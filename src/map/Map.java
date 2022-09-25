@@ -396,7 +396,7 @@ public class Map {
     public boolean moveHero() {
 
         // If the position is empty (it exists, and it does not already have
-        // an object
+        // an object)
         if (isEmpty(positionInFrontOfHero())) {
             // Copy the hero to that point in the array
             setObjectAt(positionInFrontOfHero(),getObjectAt(heroPositionReference));
@@ -414,6 +414,47 @@ public class Map {
         }
 
     }
+
+    /**
+     * Turns the hero to face west and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if west square is empty
+     * @return whether the hero successfully moved left after turning to face west
+     */
+    public boolean goLeft() {
+        heroFacing = Cardinality.WEST;
+        return moveHero();
+    }
+
+    /**
+     * Turns the hero to face north and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if north square is empty
+     * @return whether the hero successfully moved up after turning to face north
+     */
+    public boolean goUp() {
+        heroFacing = Cardinality.NORTH;
+        return moveHero();
+    }
+
+    /**
+     * Turns the hero to face east and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if east square is empty
+     * @return whether the hero successfully moved up after turning to face east
+     */
+    public boolean goRight() {
+        heroFacing = Cardinality.EAST;
+        return moveHero();
+    }
+
+    /**
+     * Turns the hero to face south and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if south square is empty
+     * @return whether the hero successfully moved up after turning to face south
+     */
+    public boolean goDown() {
+        heroFacing = Cardinality.SOUTH;
+        return moveHero();
+    }
+
 
     /**
      * Turns the direction that the hero is facing by 90 degrees left
