@@ -44,9 +44,8 @@ public class Map {
      */
     public Map(String pathToCSV,String pathToJSON) {
 
-        GameObject[][] initialMap =  loadMapFromCSV(pathToCSV);
-        initialMap = loadEntitiesFromJSON(initialMap,pathToJSON);
-        map = initialMap;
+        loadMapFromCSV(pathToCSV);
+        loadEntitiesFromJSON(pathToJSON);
 
     }
 
@@ -61,8 +60,10 @@ public class Map {
         this.map = map;
     }
 
-    private static GameObject[][] loadEntitiesFromJSON(GameObject[][] initialMap, String pathToJSON) {
-        GameObject[][] retMap = initialMap;
+    private static GameObject[][] initialiseBoard(int sizeX, int sizeY){
+        return new GameObject[sizeX][sizeY];
+    }
+    private static void loadEntitiesFromJSON(String pathToJSON) {
 
         //Initialise parser for JSON files.
         JSONParser jsonParser = new JSONParser();
@@ -78,11 +79,9 @@ public class Map {
             for (Object object:
                  gameObjects) {
                 JSONObject jsonObject = (JSONObject) object;
-                parseGameObject(retMap,jsonObject);
+                parseGameObject(jsonObject);
 
                 System.out.println(jsonObject);
-
-
             }
 
         } catch (FileNotFoundException | ParseException e) {
@@ -90,10 +89,9 @@ public class Map {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return retMap;
     }
 
-    private static GameObject[][] parseGameObject(GameObject[][] inputMap, JSONObject jsonObject) {
+    private static void parseGameObject(JSONObject jsonObject) {
         String type = jsonObject.toJSONString().substring(2,9);
         String resultStr = "";
         //Collect Object type.
@@ -106,25 +104,72 @@ public class Map {
                 resultStr=resultStr+type.charAt(i);
             }
         }
-        switch(resultStr){
-            case "hero":
-                JSONObject heroObject = (JSONObject) jsonObject.get(resultStr);
-                String charRep = (String) jsonObject.get("charRepresentation");
-                String name = jsonObject.get("name").toString();
-                int healthPoints = 0;//(int) jsonObject.get("healthPoints");
-                System.out.println(charRep + name + healthPoints);
-                break;
-            case "monster":
-                JSONObject monsterObject = (JSONObject) jsonObject.get(resultStr);
-                break;
-            case "item":
-                JSONObject itemObject = (JSONObject) jsonObject.get(resultStr);
-                break;
-            default:
-                throw new RuntimeException("Invalid object type");
-        }
+        String charRep;
+        String name;
+        int healthPoints;
+        int attackPoints;
+        String[] phrases;
+        String description;
+        ArrayList<Item> items;
+        String position;
+        int x;
+        int y;
 
-        return inputMap;
+        switch (resultStr) {
+            case "hero" -> {
+                JSONObject heroObject = (JSONObject) jsonObject.get(resultStr);
+                charRep = heroObject.get("charRepresentation").toString();
+                name = heroObject.get("name").toString();
+                healthPoints = Integer.parseInt(heroObject.get("healthPoints").toString());
+                attackPoints = Integer.parseInt(heroObject.get("attackPoints").toString());
+                phrases = (String[]) heroObject.get("phrases");
+                description = null;
+                items = null;
+                //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
+                Hero hero = new Hero(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, items);
+                position = heroObject.get("position").toString();
+                x = Integer.parseInt(position.charAt(0) + "");
+                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+                map[x][y] = hero;
+            }
+            case "monster" -> {
+                JSONObject monsterObject = (JSONObject) jsonObject.get(resultStr);
+                charRep = monsterObject.get("charRepresentation").toString();
+                name = monsterObject.get("name").toString();
+                healthPoints = Integer.parseInt(monsterObject.get("healthPoints").toString());
+                attackPoints = Integer.parseInt(monsterObject.get("attackPoints").toString());
+                phrases = (String[]) monsterObject.get("phrases");
+                description = null;
+                Item dropItem = (Item) monsterObject.get("item");
+                //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
+                Monster monster = new Monster(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, dropItem);
+                position = monsterObject.get("position").toString();
+                x = Integer.parseInt(position.charAt(0) + "");
+                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+
+                //Place monster into map
+                //setObjectAt();
+                map[x][y] = monster;
+            }
+            case "item" -> {
+                JSONObject itemObject = (JSONObject) jsonObject.get(resultStr);
+                charRep = itemObject.get("charRepresentation").toString();
+                name = itemObject.get("name").toString();
+                if (itemObject.get("description") != null) {
+                    description = itemObject.get("description").toString();
+                } else {
+                    description = "null";
+                }
+                String actionEffects = itemObject.get("actionEffects").toString();
+                int actionChange = Integer.parseInt(itemObject.get("actionChange").toString());
+                Item item = new Item(charRep.charAt(0), name, description, actionEffects, actionChange);
+                position = itemObject.get("position").toString();
+                x = Integer.parseInt(position.charAt(0) + "");
+                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+                map[x][y] = item;
+            }
+            default -> throw new RuntimeException("Invalid object type");
+        }
     }
 
     /**
@@ -154,22 +199,24 @@ public class Map {
                 //CASE: Hero
                 if (map[j][i] instanceof Hero) {
                  hero = (Hero) map[j][i];
-                 heroPosition = new Position(i,j);
+                 heroPosition = new Position(j,i);
                 }
                 //CASE: Monster
                 else if (map[j][i] instanceof Monster monster) {
                     monsters.add(monster);
-                  monsterPositions.add(new Position(i,j));
+                  monsterPositions.add(new Position(j,i));
                 }
                 //CASE: Item:
                 else if (map[j][i] instanceof Item) {
                     Item item = (Item) map[j][i];
                     items.add(item);
-                    itemPositions.add(new Position(i,j));
+                    itemPositions.add(new Position(j,i));
                 }
             }
         }
 
+
+        //Construct array of all the objects for the JSON file.
         JSONArray jsonElements = new JSONArray();
 
         //Create hero json object.
@@ -193,9 +240,10 @@ public class Map {
     }
 
     /**
-     *
-     * @param json
-     * @param fileName
+     *Writes the JSONArray to the save folder.
+     * @author Ethan Teber-Rossi
+     * @param json The JSONArray object
+     * @param fileName the intended name for the new JSON file.
      */
     private static void writeJSONtoStorage(JSONArray json,String fileName){
         try (FileWriter file = new FileWriter(SAVE_FILE_PATH+"//"+ fileName+ ".json")) {
@@ -226,6 +274,7 @@ public class Map {
         heroAttributes.put("attackPoints",hero.getAttackPoints());
         heroAttributes.put("phrases",hero.getPhrases());
         heroAttributes.put("description",hero.getDescription());
+        //Items
         // jsonObject.put("items",hero.getItems());
 
         //Construct the nested hero JSON Object.
@@ -267,6 +316,8 @@ public class Map {
         itemAttributes.put("position",position.getX() + ", "+ position.getY());
         itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
         itemAttributes.put("name",item.getName());
+        itemAttributes.put("actionEffects",item.getActionEffect().toString());
+        itemAttributes.put("actionChange",item.getActionChange());
 
         //Construct the nested item JSON Object.
         JSONObject jsonItem = new JSONObject();
@@ -284,7 +335,7 @@ public class Map {
      * @param saveFileName the name of the save file.
      * @ return true if successful.
      */
-    private static boolean saveGameState(int id,String saveFileName){
+    public static boolean save(int id,String saveFileName){
         //Validate ID and saveFileName inputs
         if (id < 0){
             throw new RuntimeException("ID must be a positive integer.");
@@ -297,6 +348,7 @@ public class Map {
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String strDate = dateFormat.format(date);
+
         //Construct the saveFileName
         String splitBy = "-";
         String fileNameDescriptor = id + splitBy + saveFileName + splitBy +strDate;
@@ -314,20 +366,30 @@ public class Map {
 
 
     public static void main(String[] args) {
-        new Map("dummySave","");
         //readJSON("newJsonFile");
-        map = loadMapFromCSV("dummySave");
-        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-        map[2][3] = hero;
-        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
-        map [4][5] = monster;
-        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
-        map [4][6] = item;
-        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
-        map [0][1] = item;
-        saveGameState(04,"myGame");
+//        map = loadMapFromCSV("dummySave");
+//         Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
+//        map[2][3] = hero;
+//        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
+//        map [4][5] = monster;
+//        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
+//        map [4][6] = item;
+//        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
+//        map [0][1] = item;
+//        saveGameState(04,"myGame");
 
-        loadEntitiesFromJSON(map,"4-myGame-2022-09-25");
+        loadMapFromCSV("dummySave");
+//        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
+//        map[2][3] = hero;
+//        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
+//        map [4][5] = monster;
+//        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
+//        map [4][6] = item;
+//        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
+//        map [0][1] = item;
+        loadEntitiesFromJSON("99-test-2022-09-26");
+        save(23,"dummyTest");
+
     }
 
 
@@ -335,13 +397,11 @@ public class Map {
      * Constructs a blank game objectMap with walls based on the wall
      * layout of the given map csv file.
      * @param pathToCSV the path to the map csv file
-     * @return the corresponding src.objects.GameObject map.
      */
-    private static GameObject[][] loadMapFromCSV(String pathToCSV) {
-
+    private static void loadMapFromCSV(String pathToCSV) {
 
         //Declare restricted size of the map
-        GameObject[][] returnMap = new GameObject[size][size];
+        GameObject[][] returnMap = initialiseBoard(size,size);
 
         //Initialise parameters for csv file
         String line;
@@ -375,7 +435,7 @@ public class Map {
             e.printStackTrace();
         }
 
-        return returnMap;
+        map = returnMap;
     }
     /**
      * Saves the current map as a CSV to local storage.
@@ -417,17 +477,6 @@ public class Map {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-        /**
-     *
-     * @return
-     */
-    public static GameObject createGameObject(){
-        GameObject retGameObject = null;
-
-        return retGameObject;
     }
 
     /**
