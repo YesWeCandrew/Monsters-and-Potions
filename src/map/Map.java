@@ -33,7 +33,7 @@ public class Map {
     private static GameObject[][] map;
     static final String SAVE_FILE_PATH = "src//saves";
     private static final short size = 8;
-    private static final String WALL_CHARACTER = "X";
+    private static final String WALL_CHARACTER = new Wall().getChar()+"";
     private static final String VACANT_CHARACTER = "_";
 
     /**
@@ -60,9 +60,131 @@ public class Map {
         this.map = map;
     }
 
+
     private static GameObject[][] initialiseBoard(int sizeX, int sizeY){
         return new GameObject[sizeX][sizeY];
     }
+
+
+    /**
+     * Saves the current game state to file.
+     * This process saves a csv file to store the map
+     * with a json file to store the entities.
+     * @param id the primary key of the file.
+     * @param saveFileName the name of the save file.
+     * @ return true if successful.
+     */
+    public static boolean save(int id,String saveFileName){
+        //Validate ID and saveFileName inputs
+        if (id < 0){
+            throw new RuntimeException("ID must be a positive integer.");
+        }
+        if (saveFileName == null || saveFileName.length() == 0 || saveFileName.isBlank()) {
+            throw new RuntimeException("saveFileName cannot be blank.");
+        }
+
+
+        //Construct the save file name.
+        String splitBy = "-";
+        String fileNameDescriptor = id + splitBy + saveFileName;
+        if(map == null){
+            throw new RuntimeException("Board is empty.");
+        }
+        //Save the map.
+        saveMapCSV(fileNameDescriptor);
+        //Save the entities.
+        saveEntitiesToJSON(fileNameDescriptor);
+
+        return true;
+    }
+
+    /**
+     * Constructs a blank game objectMap with walls based on the wall
+     * layout of the given map csv file.
+     * @param pathToCSV the path to the map csv file
+     */
+    private static void loadMapFromCSV(String pathToCSV) {
+
+        //Declare restricted size of the map
+        GameObject[][] returnMap = initialiseBoard(size,size);
+
+        //Initialise parameters for csv file
+        String line;
+        String splitBy = ",";
+        try
+        {
+            //Parse the CSV file into BufferedReader class constructor
+            BufferedReader br = new BufferedReader(new FileReader(SAVE_FILE_PATH + "//" + pathToCSV +".csv"));
+            short row = 0;
+            //Read each line, splitting into walls and spaces.
+            while ((line = br.readLine()) != null)
+            {
+                // Split the line into segments based on comma as separator
+                String[] gameRow = line.split(splitBy);
+
+                //Convert to game objects and place into the map.
+                for (int i = 0; i < gameRow.length && i < size; i++) {
+
+                    if (gameRow[i].equals(WALL_CHARACTER)){
+                        returnMap[i][row] = new Wall();
+                    } else{
+                        returnMap[i][row] = null;
+                    }
+
+                }
+                row++;
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        map = returnMap;
+    }
+
+    /**
+     * Saves the current map as a CSV to local storage.
+     * @param fileName the name of the new CSV filesave.
+     */
+    public static void saveMapCSV(String fileName) {
+        //initialise string array to collect map data.
+        List<String[]> data = new ArrayList<>();
+
+        //Convert map to String 2D Array
+        for (int i = 0; i < size; i++) {
+            //Construct the CSV row.
+            String[] row = new String[size];
+            for (int j = 0; j < size; j++) {
+                if ((map[j][i] != null) && (map[j][i] instanceof Wall)) {
+                    row[j] = WALL_CHARACTER;
+                } else {
+                    row[j] = VACANT_CHARACTER;
+                }
+            }
+            //Place in data array.
+            data.add(row);
+        }
+        //Setup file
+        File file = new File(SAVE_FILE_PATH + "//" + fileName + ".csv");
+        try {
+            // Create FileWriter object with file as parameter
+            FileWriter outputFile = new FileWriter(file);
+
+            // Create CSVWriter with ',' as separator
+            CSVWriter writer = new CSVWriter(outputFile, ',',
+                    CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END);
+            //Write data to CSV file.
+            writer.writeAll(data);
+            // Closing writer connection
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void loadEntitiesFromJSON(String pathToJSON) {
 
         //Initialise parser for JSON files.
@@ -74,14 +196,11 @@ public class Map {
             Object json = jsonParser.parse(reader);
 
             JSONArray gameObjects = (JSONArray) json;
-            int laugh = 1;
-            //Iterate over employee array
-            for (Object object:
-                 gameObjects) {
+            //Iterate over objects array
+            for (Object object: gameObjects) {
                 JSONObject jsonObject = (JSONObject) object;
+                //Obtain the game object and place within the board.
                 parseGameObject(jsonObject);
-
-                System.out.println(jsonObject);
             }
 
         } catch (FileNotFoundException | ParseException e) {
@@ -191,8 +310,8 @@ public class Map {
         ArrayList<Item> items = new ArrayList<>();
         ArrayList<Position> itemPositions = new ArrayList<>();
 
+        //Traverse through board
         for (int i = 0; i < size; i++) {
-            //Construct the CSV row.
             for (int j = 0; j < size; j++) {
 
                 // TODO: 24/09/2022   switch statement this
@@ -327,41 +446,7 @@ public class Map {
         return jsonItem;
     }
 
-    /**
-     * Saves the current game state to file.
-     * This process saves a csv file to store the map
-     * with a json file to store the entities.
-     * @param id the primary key of the file.
-     * @param saveFileName the name of the save file.
-     * @ return true if successful.
-     */
-    public static boolean save(int id,String saveFileName){
-        //Validate ID and saveFileName inputs
-        if (id < 0){
-            throw new RuntimeException("ID must be a positive integer.");
-        }
-        if (saveFileName == null || saveFileName.length() == 0 || saveFileName.isBlank()) {
-            throw new RuntimeException("saveFileName cannot be blank.");
-        }
 
-        //Obtain the date
-        Date date = Calendar.getInstance().getTime();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String strDate = dateFormat.format(date);
-
-        //Construct the saveFileName
-        String splitBy = "-";
-        String fileNameDescriptor = id + splitBy + saveFileName + splitBy +strDate;
-        if(map == null){
-            throw new RuntimeException("Map does not exist.");
-        }
-        //Save the map.
-        saveMapCSV(fileNameDescriptor);
-        //Save the entities.
-        saveEntitiesToJSON(fileNameDescriptor);
-
-        return true;
-    }
 
 
 
@@ -393,91 +478,7 @@ public class Map {
     }
 
 
-    /**
-     * Constructs a blank game objectMap with walls based on the wall
-     * layout of the given map csv file.
-     * @param pathToCSV the path to the map csv file
-     */
-    private static void loadMapFromCSV(String pathToCSV) {
 
-        //Declare restricted size of the map
-        GameObject[][] returnMap = initialiseBoard(size,size);
-
-        //Initialise parameters for csv file
-        String line;
-        String splitBy = ",";
-        try
-        {
-        //Parse the CSV file into BufferedReader class constructor
-            BufferedReader br = new BufferedReader(new FileReader(SAVE_FILE_PATH + "//" + pathToCSV +".csv"));
-            short row = 0;
-            //Read each line, splitting into walls and spaces.
-            while ((line = br.readLine()) != null)
-            {
-                // Split the line into segments based on comma as separator
-                String[] gameRow = line.split(splitBy);
-
-                //Convert to game objects and place into the map.
-                for (int i = 0; i < gameRow.length && i < size; i++) {
-
-                    if (gameRow[i].equals(WALL_CHARACTER)){
-                        returnMap[i][row] = new Wall();
-                    } else{
-                        returnMap[i][row] = null;
-                    }
-
-                }
-                row++;
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        map = returnMap;
-    }
-    /**
-     * Saves the current map as a CSV to local storage.
-     * @param fileName the name of the new CSV filesave.
-     */
-    public static void saveMapCSV(String fileName) {
-        //initialise string array to collect map data.
-        List<String[]> data = new ArrayList<>();
-
-        //Convert map to String 2D Array
-        for (int i = 0; i < size; i++) {
-            //Construct the CSV row.
-            String[] row = new String[size];
-            for (int j = 0; j < size; j++) {
-                if ((map[j][i] != null) && (map[j][i] instanceof Wall)) {
-                    row[j] = WALL_CHARACTER;
-                } else {
-                    row[j] = VACANT_CHARACTER;
-                }
-            }
-            //Place in data array.
-            data.add(row);
-        }
-        //Setup file
-        File file = new File(SAVE_FILE_PATH + "//" + fileName + ".csv");
-        try {
-            // Create FileWriter object with file as parameter
-            FileWriter outputfile = new FileWriter(file);
-
-            // Create CSVWriter with ',' as separator
-            CSVWriter writer = new CSVWriter(outputfile, ',',
-                    CSVWriter.NO_QUOTE_CHARACTER,
-                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                    CSVWriter.DEFAULT_LINE_END);
-            //Write data to CSV file.
-            writer.writeAll(data);
-            // Closing writer connection
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Returns the GameState as a string ready to display in terminal
