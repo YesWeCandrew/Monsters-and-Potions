@@ -33,7 +33,7 @@ public class Map {
     private static GameObject[][] map;
     static final String SAVE_FILE_PATH = "src//saves";
     private static final short size = 8;
-    private static final String WALL_CHARACTER = new Wall().getChar()+"";
+    private static final String WALL_CHARACTER = String.valueOf(new Wall().getChar());
     private static final String VACANT_CHARACTER = "_";
 
     /**
@@ -59,6 +59,24 @@ public class Map {
         heroFacing = Cardinality.NORTH;
         this.map = map;
     }
+    public static void main(String[] args) {
+
+        loadMapFromCSV("dummySave");
+        Hero hero = new Hero('H',"Greg",100,100,null,null,null);
+        map[2][3] = hero;
+        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
+        map [4][5] = monster;
+        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
+        map [4][6] = item;
+        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
+        map [0][1] = item;
+        //loadEntitiesFromJSON("99-test-2022-09-26");
+        save(54,"anotherSave");
+
+    }
+
+
+
 
 
     private static GameObject[][] initialiseBoard(int sizeX, int sizeY){
@@ -450,32 +468,7 @@ public class Map {
 
 
 
-    public static void main(String[] args) {
-        //readJSON("newJsonFile");
-//        map = loadMapFromCSV("dummySave");
-//         Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-//        map[2][3] = hero;
-//        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
-//        map [4][5] = monster;
-//        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
-//        map [4][6] = item;
-//        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
-//        map [0][1] = item;
-//        saveGameState(04,"myGame");
 
-        loadMapFromCSV("dummySave");
-//        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-//        map[2][3] = hero;
-//        Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
-//        map [4][5] = monster;
-//        Item item = new Item('I',"Fancy Sword","Can kill and stab. its a good sword.","attack",0);
-//        map [4][6] = item;
-//        Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
-//        map [0][1] = item;
-        loadEntitiesFromJSON("99-test-2022-09-26");
-        save(23,"dummyTest");
-
-    }
 
 
 
