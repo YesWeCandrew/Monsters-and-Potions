@@ -59,8 +59,7 @@ public class Interface {
         display.displayUI();
         System.out.println();
 
-        map.turnHeroLeft();
-        map.moveHero();
+        map.goLeft();
         display.displayUI();
         System.out.println();
     }
