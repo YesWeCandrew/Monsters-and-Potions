@@ -1,6 +1,7 @@
 package objects;
 
 public class Monster extends LivingGameObject{
+    public final int itemsSize = 4;
     public Monster(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, Item itemToDrop) {
         super(charRepresentation, name, healthPoints, attackPoints, phrases, description);
         this.itemToDrop = itemToDrop;
@@ -16,4 +17,5 @@ public class Monster extends LivingGameObject{
     public Item getItemToDrop() {
         return itemToDrop;
     }
+
 }

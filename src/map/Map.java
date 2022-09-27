@@ -124,6 +124,7 @@ public class Map {
     private static void loadMapFromCSV(String pathToCSV) {
 
         //Declare restricted size of the map
+        // TODO: 2021-09-28  make this dynamic
         GameObject[][] returnMap = initialiseBoard(size,size);
 
         //Initialise parameters for csv file
@@ -260,8 +261,9 @@ public class Map {
                 healthPoints = Integer.parseInt(heroObject.get("healthPoints").toString());
                 attackPoints = Integer.parseInt(heroObject.get("attackPoints").toString());
                 phrases = (String[]) heroObject.get("phrases");
-                description = null;
-                items = null;
+                // TODO change the below two lines instead of add null to description and items
+                description = heroObject.get("description").toString();
+                items = heroObject.get("items") == null ? null : (ArrayList<Item>) heroObject.get("items");
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Hero hero = new Hero(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, items);
                 position = heroObject.get("position").toString();
@@ -276,7 +278,8 @@ public class Map {
                 healthPoints = Integer.parseInt(monsterObject.get("healthPoints").toString());
                 attackPoints = Integer.parseInt(monsterObject.get("attackPoints").toString());
                 phrases = (String[]) monsterObject.get("phrases");
-                description = null;
+                // TODO change the below two lines instead of add null to description
+                description = monsterObject.get("description").toString();
                 Item dropItem = (Item) monsterObject.get("item");
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Monster monster = new Monster(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, dropItem);
@@ -329,6 +332,7 @@ public class Map {
         ArrayList<Position> itemPositions = new ArrayList<>();
 
         //Traverse through board
+         // TODO 29/09/2022 make the size of the board dynamic
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
 
@@ -349,6 +353,7 @@ public class Map {
                     items.add(item);
                     itemPositions.add(new Position(j,i));
                 }
+                // TODO CASE: Empty??
             }
         }
 
@@ -413,7 +418,11 @@ public class Map {
         heroAttributes.put("description",hero.getDescription());
         //Items
         // jsonObject.put("items",hero.getItems());
-
+        // TODO 29/09/2022 add items to hero
+        // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
+        for (int i = 0; i < hero.itemsSize; i++) {
+            heroAttributes.put("item"+i,hero.getItem(i));
+        }
         //Construct the nested hero JSON Object.
         JSONObject jsonHero = new JSONObject();
         String heroPlaceHolder = "hero";
@@ -439,7 +448,7 @@ public class Map {
         monsterDetails.put("phrases",monster.getPhrases());
         monsterDetails.put("description",monster.getDescription());
         // jsonObject.put("items",monster.getItems());
-
+        monsterDetails.put("itemToDrop",monster.getItemToDrop());
         //Construct the nested monster JSON Object.
         JSONObject jsonMonster = new JSONObject();
         String monsterPlaceHolder = "monster";

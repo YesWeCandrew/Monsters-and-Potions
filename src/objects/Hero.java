@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Hero extends LivingGameObject{
 
     private ArrayList<Item> items;
-    private final int itemsSize;
+    public final int itemsSize;
 
     public Hero(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, ArrayList<Item> items) {
         super(charRepresentation, name, healthPoints, attackPoints, phrases, description);
