@@ -7,7 +7,8 @@ public class Hero extends LivingGameObject{
     private ArrayList<Item> items;
     private final int itemsSize;
 
-    public Hero(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, ArrayList<Item> items) {
+    public Hero(char charRepresentation, String name, int healthPoints, int attackPoints,
+                String[] phrases, String description, ArrayList<Item> items) {
         super(charRepresentation, name, healthPoints, attackPoints, phrases, description);
         this.items = items;
 
@@ -15,7 +16,6 @@ public class Hero extends LivingGameObject{
         // To make displaying it easier
         this.itemsSize = 4;
     }
-
 
     /**
      * Attempts to add the item to the Hero's inventory. If the object can be
@@ -35,12 +35,10 @@ public class Hero extends LivingGameObject{
 
         // Taking the action as described by the items actionEffect and actionChange
         switch (item.getActionEffect()) {
-            case health -> {
+            case health ->
                 this.changeHealth(item.getActionChange());
-            }
-            case attack -> {
+            case attack ->
                 this.changeAttack(item.getActionChange());
-            }
         }
         return true;
     }
@@ -48,6 +46,7 @@ public class Hero extends LivingGameObject{
     /**
      * Removes the item at the xth number of the inventory. Also undoes the
      * effects on health/armour
+     *
      * @param x the number in the array to remove (starting at 0)
      * @return the item if it was removed successfully, or null otherwise
      */
@@ -61,20 +60,19 @@ public class Hero extends LivingGameObject{
 
         // Undoing the action as described by the items actionEffect and actionChange
         switch (item.getActionEffect()) {
-            case health -> {
+            case health ->
                 this.changeHealth(-item.getActionChange());
-            }
-            case attack -> {
+            case attack ->
                 this.changeAttack(-item.getActionChange());
-            }
         }
 
         return item;
     }
 
     /**
-     Returns the nth item in the item list.
-     @param n the (0 start) index in the array of the item to return
+     * Returns the nth item in the item list.
+     *
+     * @param n the (0 start) index in the array of the item to return
      */
     public Item getItem(int n) {
         return this.items.get(n);
