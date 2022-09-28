@@ -79,24 +79,31 @@ public class Map {
     }
 
     private GameObject[][] loadEntitiesFromJSON(GameObject[][] initialMap, String pathToJSON) {
-        GameObject[][] retMap = initialMap;
 
-        //Load json file
+        //Initialise parser for JSON files.
+        JSONParser jsonParser = new JSONParser();
 
-        //Go through file.
+        try (FileReader reader = new FileReader(SAVE_FILE_PATH+"//"+ pathToJSON+ ".json"))
+        {
+            //Read JSON file
+            Object json = jsonParser.parse(reader);
 
+            JSONArray gameObjects = (JSONArray) json;
+            //Iterate over objects array
+            for (Object object: gameObjects) {
+                JSONObject jsonObject = (JSONObject) object;
+                //Obtain the game object and place within the board.
+                parseGameObject(jsonObject);
+            }
 
-        Hero hero = new Hero('H',"Jeff",100,100,null,null,null);
-        String jsonObject = writeJSONObject(hero);
-        Hero hero2 = new Hero('H',"Greg",200,100,null,null,null);
-        String jsonObject2 = writeJSONObject(hero);
-
-        String finalJson = jsonObject+jsonObject2;
-        writeJSONTOFile(finalJson);
-
-        return retMap;
+        } catch (FileNotFoundException | ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        map = initialMap;
+        return map;
     }
-
     private void writeJSONTOFile(String json){
         GsonBuilder builder = new GsonBuilder().setPrettyPrinting();
         Gson gson = builder.create();
