@@ -77,7 +77,11 @@ public class Hero extends LivingGameObject{
      @param n the (0 start) index in the array of the item to return
      */
     public Item getItem(int n) {
-        return this.items.get(n);
+        // If the item is not in the array, return null
+        if (n >= items.size()) {
+            return null;
+        }
+        return items.get(n);
     }
 
 

@@ -264,7 +264,7 @@ public class Map {
                 // TODO change the below two lines instead of add null to description and items
                 description = heroObject.get("description").toString();
                 items = heroObject.get("items") == null ? null : (ArrayList<Item>) heroObject.get("items");
-                //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
+                //items = (ArrayList<Item>) heroObject.get("items");
                 Hero hero = new Hero(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, items);
                 position = heroObject.get("position").toString();
                 x = Integer.parseInt(position.charAt(0) + "");
