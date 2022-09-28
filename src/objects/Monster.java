@@ -1,5 +1,7 @@
 package objects;
 
+import java.util.Random;
+
 public class Monster extends LivingGameObject{
     public Monster(char charRepresentation, String name, int healthPoints, int attackPoints, String[] phrases, String description, Item itemToDrop) {
         super(charRepresentation, name, healthPoints, attackPoints, phrases, description);
@@ -9,8 +11,8 @@ public class Monster extends LivingGameObject{
     private Item itemToDrop;
 
     public String speak() {
-        // should probably return a random string from the phrases
-        return getPhrases()[0];
+        Random rand = new Random();
+        return getPhrases()[rand.nextInt(getPhrases().length)];
     }
 
     public Item getItemToDrop() {
