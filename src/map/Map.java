@@ -50,7 +50,7 @@ public class Map {
      */
     public Map(GameObject[][] map, Position heroPos) {
         this.heroPositionReference = heroPos;
-        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", null);
+        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", new ArrayList<>());
         heroFacing = Cardinality.NORTH;
         this.map = map;
     }
@@ -232,6 +232,8 @@ public class Map {
     }
 
     /**
+     * deprecated
+     *
      * Returns the GameState as a string ready to display in terminal
      * @param x the x coordinate of the middle cell to be displayed
      * @param y the y coordinate of the middle cell to be displayed

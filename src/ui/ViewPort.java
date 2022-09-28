@@ -15,34 +15,34 @@ public class ViewPort extends Element {
     public ViewPort(Map map, int viewRadius, boolean bordered) {
         this.map = map;
         this.viewRadius = viewRadius;
+        this.bordered = bordered;
 
         int diameter = viewRadius * 2 + 1;
-        setWidth(diameter + 2);
-        setHeight(diameter + 2);
+        setWidth(bordered ? diameter + 2 : diameter);
+        setHeight(bordered ? diameter + 2 : diameter);
     }
 
     public ViewPort(Map map) {
         this(map, 0, true);
     }
 
-    public void setViewRadius(int viewRadius) {
-        this.viewRadius = viewRadius;
-    }
-
-    // TODO create none wall border for aesthetic reasons
     @Override
     public String[] getStringRender() {
         int d = viewRadius * 2 + 1;
         Position centre = map.getHeroPositionReference();
         char OutOfBoundsChar = (char)(new Wall().getChar());
 
-        String[] view = new String[d + 2];
-        String horizontalBorder = String.valueOf(borderChar).repeat(d + 2);
-        view[0] = horizontalBorder;
-        // TODO include Cardinality (rotate view port with rotation of hero by changing bounds of loops, counter, and getObjectAt() call parameters)
-        int i = 1;
+        String[] view = new String[bordered ? d + 2 : d];
+        int i = 0;
+        if(bordered) {
+            String horizontalBorder = String.valueOf(borderChar).repeat(d + 2);
+            view[i] = horizontalBorder;
+            view[d + 1] = horizontalBorder;
+            i++;
+        }
+
         for(int y = centre.getY() - viewRadius; y <= centre.getY() + viewRadius; y++) {
-            String row = String.valueOf(borderChar);
+            String row = bordered ? String.valueOf(borderChar) : "";
             for(int x = centre.getX() - viewRadius; x <= centre.getX() + viewRadius; x++) {
                 boolean inMapBounds = x >= 0 && x < map.getWidth() && y >= 0 && y < map.getHeight();
 
@@ -54,12 +54,21 @@ public class ViewPort extends Element {
 
                 row += value;
             }
-            row += borderChar;
+            row += bordered ? borderChar : "";
             view[i] = row;
             i++;
         }
-        view[i] = horizontalBorder;
 
         return view;
+    }
+
+    @Override
+    public void maximizeSize() {
+        setWidth(bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1);
+        setHeight(bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1);
+    }
+
+    public void setViewRadius(int viewRadius) {
+        this.viewRadius = viewRadius;
     }
 }

@@ -35,6 +35,11 @@ public abstract class Element {
         this.height = height;
     }
 
+    public void relocate(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public int getX() {
         return x;
     }
@@ -61,4 +66,11 @@ public abstract class Element {
     }
 
     public abstract String[] getStringRender();
+
+    public abstract void maximizeSize();
+
+    @Override
+    public String toString() {
+        return String.join(System.lineSeparator(), getStringRender());
+    }
 }

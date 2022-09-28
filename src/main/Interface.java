@@ -3,18 +3,30 @@ package main;
 import map.Map;
 import map.Position;
 import objects.GameObject;
+import objects.Hero;
+import objects.Item;
 import objects.Wall;
-import ui.Pane;
-import ui.ViewPort;
+import ui.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Interface {
 
     Pane main = null;
+
     Map map;
+    ViewPort mapView;
+    Pane inv_stats, interact_tooltip;
 
     public Interface(Map map) {
         this.map = map;
+
         this.main = createMain();
+    }
+
+    public Interface() {
+        this(null);
     }
 
     private Pane getMain() {
@@ -23,16 +35,106 @@ public class Interface {
 
     private Pane createMain() {
         Pane main = new Pane();
+        int viewPortRadius = 5;
 
-        ViewPort mapView = new ViewPort(map, 3, true);
-        // inventory + stats view
-        // setX of inventory
+        int x = 0;
+        // inventory + stats
+        this.inv_stats = new Pane();
+        createPlayerStatistics(1, 0, 23);
+        createInventory(1, 3, 25);
+        this.inv_stats.relocate(0, 0);
+        this.inv_stats.setWidth(25);
+
+        Separator leftSeperator = new Separator(viewPortRadius * 2 + 3, false, '|');
+        leftSeperator.relocate(inv_stats.getX() + inv_stats.getWidth() + 1, 0);
+
+        // map view
+        this.mapView = new ViewPort(map, viewPortRadius, true);
+        mapView.relocate(leftSeperator.getX() + 2, 0);
+        mapView.maximizeSize();
+
+        Separator rightSeperator = new Separator(viewPortRadius * 2 + 3, false, '|');
+        rightSeperator.relocate(mapView.getX() + mapView.getWidth() + 1, 0);
+
         // interactions + tooltip view
+        this.interact_tooltip = new Pane();
+        createInteractions(1, 0, 25, 4);
+        createToolTip(1, 5, 25);
+        interact_tooltip.relocate(rightSeperator.getX() + 1, 0);
+        interact_tooltip.maximizeSize();
 
-
-        main.addElement(mapView);
+        main.addElements(inv_stats, leftSeperator, interact_tooltip, rightSeperator, mapView);
 
         return main;
+    }
+
+    private void createPlayerStatistics(int x, int y, int maxWidth) {
+        Hero hero = map.getHero();
+        StatisticsBar healthPoints = new StatisticsBar("HP", 0, 100, 10, '*', '-', maxWidth);
+        healthPoints.setListener(() -> hero.getHealthPoints());
+        healthPoints.relocate(x, y);
+
+        StatisticsBar actionPoints = new StatisticsBar("AP", 0, 100, 10, '*', '-', maxWidth);
+        actionPoints.setListener(() -> hero.getAttackPoints());
+        actionPoints.relocate(x, y + 1);
+
+        this.inv_stats.addElements(healthPoints, actionPoints);
+    }
+
+    private void createInventory(int x, int y, int maxWidth) {
+        Hero hero = map.getHero();
+        TextField inventoryText = new TextField("Inventory:");
+        inventoryText.relocate(x, y);
+
+        Separator leftSeperator = new Separator(hero.getMaxItemsSize(), false, '|');
+        leftSeperator.relocate(x, y + 1);
+
+        TextList inventoryList = new TextList(hero.getMaxItemsSize(), maxWidth - 4);
+        inventoryList.setListener(() -> {
+            String[] items = new String[hero.getItemsSize()];
+            for(int i = 0; i < items.length; i++)
+                items[i] = hero.getItem(i).getName();
+
+            return items;
+        });
+        inventoryList.maximizeSize();
+        inventoryList.relocate(x + 2, y + 1);
+
+        Separator rightSeperator = new Separator(hero.getMaxItemsSize(), false, '|');
+        rightSeperator.relocate(x + inventoryList.getWidth(), y + 1);
+
+        this.inv_stats.addElements(inventoryText, leftSeperator, inventoryList, rightSeperator);
+    }
+
+    private void createInteractions(int x, int y, int maxWidth, int maxHeight) {
+        String text = "testing testing, one, two, three. hello everybody, here is something"; // TODO need to get interactions text (i.e. quests, phrases, ...)
+
+        TextField textField = new TextField(maxWidth, maxHeight);
+        textField.setText(text);
+        textField.relocate(x, y);
+
+        this.interact_tooltip.addElement(textField);
+    }
+
+    private void createToolTip(int x, int y, int maxWidth) {
+        TextField toolTipText = new TextField("Options:");
+        toolTipText.relocate(x, y);
+
+        Separator leftSeperator = new Separator(5, false, '|');
+        leftSeperator.relocate(x, y + 1);
+
+        ArrayList<String> optionStrings = new ArrayList<>(Arrays.asList("(W) Move North", "(S) Move South", "(D) Move East", "(A) Move West")); // TODO need to get options from map (i.e. move left, attack, flee)
+        TextList options = new TextList(optionStrings.size(), maxWidth - 4);
+        options.relocate(x + 2, y + 1);
+
+        Separator rightSeperator = new Separator(5, false, '|');
+        rightSeperator.relocate(x + options.getWidth(), y + 1);
+
+        for(String optionText : optionStrings) {
+            options.addText(optionText);
+        }
+
+        this.interact_tooltip.addElements(toolTipText, leftSeperator, options, rightSeperator);
     }
 
     public void displayUI() {
@@ -44,6 +146,11 @@ public class Interface {
         System.out.flush();
     }
 
+    /**
+     * test main method, temporary
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         GameObject[][] area = new GameObject[5][5];
         area[1][0] = new Wall(); // in front to the left
@@ -59,6 +166,7 @@ public class Interface {
         display.displayUI();
         System.out.println();
 
+        map.getHero().pickUpItem(new Item('P', "Health Potion", "Test potion", "health", 0));
         map.turnHeroLeft();
         map.moveHero();
         display.displayUI();

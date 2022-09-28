@@ -1,42 +1,55 @@
 package ui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Pane extends Element {
 
-    ArrayList<Element> elements = new ArrayList<Element>(); // in render order (first is rendered first)
+    ArrayList<Element> elementsOrder = new ArrayList<Element>(); // in render order (first is rendered first)
 
     public Pane(int width, int height) {
         super(width, height);
     }
 
     public Pane() {
-
+        super(-1, -1);
     }
 
-    public void addElement(ui.Element element) {
-        elements.add(element);
+    public void addElement(Element element) {
+        elementsOrder.add(element);
+    }
+
+    public void addElements(Element... elements) {
+        elementsOrder.addAll(new ArrayList<Element>(Arrays.asList(elements)));
     }
 
     public void removeElement(Element element) {
-        elements.remove(element);
+        elementsOrder.remove(element);
     }
 
     public int getElementsSize() {
-        return elements.size();
+        return elementsOrder.size();
+    }
+
+    @Override
+    public void maximizeSize() {
+        int maxWidth = 0, maxHeight = 0;
+        for(Element element : elementsOrder) {
+            if(element instanceof Pane)
+                element.maximizeSize();
+
+            maxWidth = Math.max(maxWidth, element.getX() + element.getWidth());
+            maxHeight = Math.max(maxHeight, element.getY() + element.getHeight());
+        }
+
+        setWidth(maxWidth);
+        setHeight(maxHeight);
     }
 
     @Override
     public String[] getStringRender() {
         if(getWidth() == -1 || getHeight() == -1) { // if size of pane is dynamic, get size from elements
-            int maxWidth = 0, maxHeight = 0;
-            for(Element element : elements) {
-                maxWidth = Math.max(maxWidth, element.getX() + element.getWidth());
-                maxHeight = Math.max(maxHeight, element.getY() + element.getHeight());
-            }
-
-            setWidth(maxWidth);
-            setHeight(maxHeight);
+            maximizeSize();
         }
 
         String[] area = new String[getHeight()];
@@ -46,7 +59,7 @@ public class Pane extends Element {
             area[i] = blankWidth;
         }
 
-        for(Element element : elements) {
+        for(Element element : elementsOrder) {
             area = insertStringArray(area, element.getStringRender(), element.getX(), element.getY());
         }
 
@@ -60,7 +73,8 @@ public class Pane extends Element {
 
     private String[] insertStringArray(String[] original, String[] insert, int x, int y) {
         int i = 0;
-        for(; y < original.length; y++) {
+        int upper = insert.length + y;
+        for(; y < Math.min(upper, original.length); y++) {
             original[y] = insertString(original[y], insert[i], x);
             i++;
         }
