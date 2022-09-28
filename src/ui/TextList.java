@@ -1,36 +1,106 @@
 package ui;
 
-public class TextList extends Pane {
+import java.util.ArrayList;
+
+public class TextList extends Element {
 
     TextField[] texts;
-    String seperator;
-    boolean horizontal;
+    Listener<String[]> listener;
+    int size, maxSize, maxWidth;
 
-    public TextList(boolean horizontal, String seperator, int maxSize) {
+    public TextList(int maxSize, int maxWidth) {
         super();
-        this.horizontal = horizontal;
-        this.seperator = seperator;
+        this.maxWidth = maxWidth;
+        this.maxSize = maxSize;
         this.texts = new TextField[maxSize];
+        maximizeSize();
+    }
+
+    public void setListener(Listener<String[]> listener) {
+        this.listener = listener;
+    }
+
+    public boolean addText(String text) {
+        return addText(size, text);
+    }
+
+    public boolean addText(int index, String text) {
+        boolean inserted = false;
+        if(size < texts.length && inBounds(index)) {
+            for (int i = texts.length - 1; i > index; i--) {
+                texts[i] = texts[i - 1];
+            }
+            TextField field = new TextField(getWidth(), 1);
+            field.setText(text);
+            texts[index] = field;
+            size++;
+
+            inserted = true;
+        }
+
+        return inserted;
+    }
+
+    public boolean addAllText(ArrayList<String> texts) {
+        boolean insertedAll = this.texts.length >= texts.size() + size;
+        for(int i = size; i < Math.min(this.texts.length, texts.size() + size); i++) {
+            TextField field = new TextField(getWidth(), 1);
+            field.setText(texts.get(i));
+
+            this.texts[i] = field;
+            size++;
+        }
+
+        return insertedAll;
+    }
+
+    public boolean removeText(int index) {
+        boolean removed = false;
+        if(inBounds(index)) {
+            for(int i = index; i < size; i++) {
+                texts[i] = i + 1 < texts.length ? texts[i + 1] : new TextField(maxWidth, 1);
+            }
+            removed = true;
+            size--;
+        }
+
+        return removed;
+    }
+
+    public void clearTexts() {
+        texts = new TextField[maxSize];
+        size = 0;
+    }
+
+    private boolean inBounds(int index) {
+        return index >= 0 && index < texts.length;
     }
 
     public TextField getTextField(int index) {
         return index < texts.length && index >= 0 ? texts[index] : null;
     }
 
-    private void renderToPane(boolean withSeparators) {
-        int x = 0, y = 0;
-        for(TextField text : texts) {
-            text.setX(x);
-            text.setY(y);
-//            if(horizontal) {
-//                if(withSeparators) {
-//                    x += text.getWidth();
-//                    Separator s = new Separator(x, y,  horizontal, )
-//                }
-//            }
-//            else {
-//
-//            }
+    @Override
+    public String[] getStringRender() {
+        if(listener != null) {
+            String[] retrieved = listener.retrieve();
+            for (int i = 0; i < Math.min(retrieved.length, texts.length); i++) {
+                addText(i, retrieved[i]);
+            }
         }
+
+        String[] render = new String[getHeight()];
+        maximizeSize();
+        for(int i = 0; i < render.length; i++) {
+            render[i] = texts[i] != null ? texts[i].getStringRender()[0] : (" ").repeat(getWidth()); // will only get the first line of text
+        }
+
+        return render;
+    }
+
+    @Override
+    public void maximizeSize() {
+        setWidth(maxWidth);
+        setHeight(texts.length);
     }
 }
