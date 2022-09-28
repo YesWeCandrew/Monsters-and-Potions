@@ -419,10 +419,14 @@ public class Map {
         //Items
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
-        // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
+        // use a for loop to add each item to the array list,
+        // note that itemSize is always set as 4 in the Hero class.
+        heroAttributes.put("items",null);
+        /**
         for (int i = 0; i < hero.itemsSize; i++) {
             heroAttributes.put("item"+i,hero.getItem(i));
         }
+         **/
         //Construct the nested hero JSON Object.
         JSONObject jsonHero = new JSONObject();
         String heroPlaceHolder = "hero";
