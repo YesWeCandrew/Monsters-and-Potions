@@ -1,7 +1,5 @@
 package objects;
 
-import objects.GameObject;
-
 public class Item extends GameObject {
 
     private final String name;
@@ -17,7 +15,6 @@ public class Item extends GameObject {
      * The amount to increase or decrease the attack or health points of the hero
      */
     private final int actionChange;
-
 
     /**
      *
