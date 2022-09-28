@@ -58,7 +58,7 @@ public class Map {
      */
     public Map(String pathToCSV,String pathToJSON) {
 
-        GameObject[][] initialMap =  loadMapFromCSV(pathToCSV);
+        GameObject[][] initialMap = loadMapFromCSV(pathToCSV);
         map = loadEntitiesFromJSON(initialMap,pathToJSON);
         X_SIZE = map.length;
         Y_SIZE = map[0].length;
@@ -195,7 +195,7 @@ public class Map {
      * @param pathToCSV the path to the map csv file
      * @return the corresponding src.objects.GameObject map.
      */
-    private static void loadMapFromCSV(String pathToCSV) {
+    private static GameObject[][] loadMapFromCSV(String pathToCSV) {
 
         //Declare restricted size of the map
         // TODO: 2021-09-28  make this dynamic
@@ -234,6 +234,7 @@ public class Map {
         }
 
         map = returnMap;
+        return returnMap;
     }
 
     /**
@@ -494,7 +495,7 @@ public class Map {
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
         // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
-        for (int i = 0; i < hero.itemsSize; i++) {
+        for (int i = 0; i < hero.getMaxItemsSize(); i++) {
             heroAttributes.put("item"+i,hero.getItem(i));
         }
         //Construct the nested hero JSON Object.
