@@ -2,16 +2,15 @@ package ui;
 
 public class Separator extends Element {
 
-    int x, y, length;
+    int length;
     boolean horizontal;
     char character;
 
-    public Separator(int x, int y, int length, boolean horizontal, char character) {
-        this.x = x;
-        this.y = y;
+    public Separator(int length, boolean horizontal, char character) {
         this.length = length;
         this.horizontal = horizontal;
         this.character = character;
+        maximizeSize();
     }
 
     @Override
@@ -26,5 +25,11 @@ public class Separator extends Element {
                 separator[i] = String.valueOf(character);
         }
         return separator;
+    }
+
+    @Override
+    public void maximizeSize() {
+        setWidth(horizontal ? length : 1);
+        setHeight(horizontal ? 1 : length);
     }
 }

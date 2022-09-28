@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Hero extends LivingGameObject{
 
     private ArrayList<Item> items;
-    private final int itemsSize;
+    private final int maxItemsSize;
 
     public Hero(char charRepresentation, String name, int healthPoints, int attackPoints,
                 String[] phrases, String description, ArrayList<Item> items) {
@@ -14,7 +14,7 @@ public class Hero extends LivingGameObject{
 
         // The itemsize for the hero. Set by the game, rather than the developer
         // To make displaying it easier
-        this.itemsSize = 4;
+        this.maxItemsSize = 4;
     }
 
     /**
@@ -26,7 +26,7 @@ public class Hero extends LivingGameObject{
      * @return whether the object was successfully added
      */
     public boolean pickUpItem(Item item){
-        if (items.size() >= itemsSize) {
+        if (items.size() >= maxItemsSize) {
             return false;
         }
 
@@ -78,6 +78,13 @@ public class Hero extends LivingGameObject{
         return this.items.get(n);
     }
 
+    public int getItemsSize() {
+        return this.items.size();
+    }
+
+    public int getMaxItemsSize() {
+        return this.maxItemsSize;
+    }
 
 
     // IDK what other kind of methods we want for just the hero, maybe
