@@ -167,7 +167,7 @@ public class Interface {
         System.out.println();
 
         map.getHero().pickUpItem(new Item('P', "Health Potion", "Test potion", "health", 0));
-        map.turnHeroLeft();
+        map.goLeft();
         map.moveHero();
         display.displayUI();
         System.out.println();

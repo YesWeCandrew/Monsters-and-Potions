@@ -58,4 +58,18 @@ public class Item extends GameObject {
     public int getActionChange() {return actionChange;}
 
     public actionEffect getActionEffect() {return actionEffects;}
+
+    /**
+     * Helper function for Map.allPossibleActions()
+     * Given an item and whether the player is facing it, it returns information
+     * about the item
+     * @param isFacing is the player facing the item
+     * @return a relevant action for the item
+     */
+    @Override
+    public String actionOptions(boolean isFacing) {
+        if (isFacing) {
+            return "(P) Pick up " + getName() + " - " + getDescription();
+        } else return " to face " + getName();
+    }
 }

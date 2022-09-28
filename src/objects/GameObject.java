@@ -15,4 +15,15 @@ public abstract class GameObject {
     public void setChar(char charRepresentation) {
         this.charRepresentation = charRepresentation;
     }
+
+    /**
+     * Helper function for Map.allPossibleActions()
+     * Given an object and whether the player is facing it, it returns information
+     * about the item
+     * @param isFacing is the player facing the item
+     * @return a relevant action for the item by default returns ""
+     */
+    public String actionOptions(boolean isFacing) {
+        return "";
+    }
 }
