@@ -42,16 +42,24 @@ public class Map {
     private static int X_SIZE;  // AKA number of columns/length
     private static int Y_SIZE; // AKA number of rows/height
 
+    // boolean is null during the game.
+    // Game play is set to loop while (heroEscaped == null)
+    // If player dies this heroEscaped set to false.
+    // If players wins by picking up the Amulet then it is set to true.
+    // We can then display a winning or loosing screen.
+    public Boolean heroEscaped;
+
     /**
      * Generates the Map (and all the other objects using their relevant
      * constructors), using the csv and JSON (or other file type tbd) provided
-     * @param pathToCSV the path to the map csv file
+     *
+     * @param pathToCSV  the path to the map csv file
      * @param pathToJSON the path to the JSON or XML or whatever file
      */
-    public Map(String pathToCSV,String pathToJSON) {
+    public Map(String pathToCSV, String pathToJSON) {
 
-        GameObject[][] initialMap =  loadMapFromCSV(pathToCSV);
-        map = loadEntitiesFromJSON(initialMap,pathToJSON);
+        GameObject[][] initialMap = loadMapFromCSV(pathToCSV);
+        map = loadEntitiesFromJSON(initialMap, pathToJSON);
         X_SIZE = map.length;
         Y_SIZE = map[0].length;
 
@@ -193,8 +201,10 @@ public class Map {
 
         return returnMap;
     }
+
     /**
      * Saves the current map as a CSV to local storage.
+     *
      * @param fileName the name of the new CSV file to save.
      */
     public static void saveMapCSV(String fileName) {
@@ -337,28 +347,28 @@ public class Map {
      * Sets the given position to null.
      * Note that this does so *safely*.
      * If the position is off the board nothing will happen
+     *
      * @param position the position to set to null.
      */
     public void clearPosition(Position position) {
 
         try {
             map[position.getX()][position.getY()] = null;
-        }
-
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
         }
     }
 
     /**
      * Returns whether the position given is on the board
+     *
      * @param position the position to check
      * @return whether the position is on the board
      * @author Andrew Howes
      */
-    public boolean isOnBoard(Position position){
-        return (position.getX() < X_SIZE &
-                position.getY() < Y_SIZE &
-                position.getX() >= 0 &
+    public boolean isOnBoard(Position position) {
+        return (position.getX() < X_SIZE &&
+                position.getY() < Y_SIZE &&
+                position.getX() >= 0 &&
                 position.getY() >= 0);
     }
 
@@ -366,18 +376,21 @@ public class Map {
      * Returns a boolean describing whether an object exists at the position.
      * NOTE: this function will return false if the position is off the board.
      * Use isEmpty to check if there is NO object and the cell exists.
+     *
      * @param position the position to check
      * @return true if an object exists, otherwise false
      * @author Andrew Howes
      */
     public boolean hasObject(Position position) {
-        if (!isOnBoard(position)) {return false;}
-        else return getObjectAt(position) != null;
+        if (!isOnBoard(position)) {
+            return false;
+        } else return getObjectAt(position) != null;
     }
 
     /**
      * Checks first that the position is on the board and has no objects.
      * If it is off the board, the function returns false;
+     *
      * @param position the position to check for emptiness
      * @return whether the position is on the board and empty
      * @author Andrew Howes
@@ -458,23 +471,49 @@ public class Map {
      * Returns the hero.
      * Will fail if the heroPositionReference is not pointing at the
      * hero position on the map.
+     *
      * @return the Hero.
      */
-    public Hero getHero(){
+    public Hero getHero() {
         return (Hero) getObjectAt(heroPositionReference);
     }
 
     /**
      * Picks up the item directly in front of the player in the direction they
      * are facing
+     *
      * @return true if the object is successfully picked up, otherwise false
+     * @author Andrew Howes
      */
     public boolean pickUpItem() {
         try {
             Item item = (Item) getObjectAt(positionInFrontOfHero());
-            return getHero().pickUpItem(item);
+            boolean success = getHero().pickUpItem(item);
+            checkHeroDead(); // Items can kill a Hero.
+
+            // If you've picked up the item and it's the Amulet, you have won!
+            if (success &&
+                    item.getName().equals("Amulet")) {
+                heroEscaped = true;
+            }
+
+            // regardless of whether you've won or died or just still going
+            // returns success because you picked up an item!
+            return success;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /**
+     * Checks whether the health points of the hero have fallen to <= 0.
+     * If they have set heroEscaped to false, which should flag game to end.
+     *
+     * @Author Andrew Howes
+     */
+    public void checkHeroDead() {
+        if (getHero().getHealthPoints() <= 0) {
+            heroEscaped = false;
         }
     }
 
@@ -485,16 +524,19 @@ public class Map {
      * - There is no object at that index in the array, or
      * - There is no position in front of the hero (is the edge of the map), or
      * - There is an object already in that place,
+     *
      * @param n the number of the item to discard (starting at 0)
      * @return whether the item could be discarded
+     * @author Andrew Howes
      */
     public boolean discardItem(int n) {
         if (isEmpty(positionInFrontOfHero())) {
-           Item item = getHero().discardItem(n);
-           if (item != null) {
-               setObjectAt(positionInFrontOfHero(),item);
-               return true;
-           }
+            Item item = getHero().discardItem(n);
+            checkHeroDead(); // discarding an item can kill a hero.
+            if (item != null) {
+                setObjectAt(positionInFrontOfHero(), item);
+                return true;
+            }
         }
 
         return false;
@@ -506,16 +548,21 @@ public class Map {
      * Otherwise, this will reduce the health points of the Monster by the
      * attackPoints of the Hero everytime it is called.
      * Note that this function will remove the Monster from the map when killed.
+     *
      * @return true if the monster is hit, otherwise if there is no monster, returns false
      */
-    public boolean attack(){
+    public boolean attack() {
         try {
             Position monstersPosition = positionInFrontOfHero();
             Monster monster = (Monster) getObjectAt(monstersPosition);
 
             // Reduce the monsters health points by the hero's attack points.
-            // If the monster is still alive after this, return true
-            if (monster.reduceHealth(getHero().getAttackPoints())){
+            // If the monster is still alive after this the hero gets
+            // attacked by the monster and return true
+            if (monster.reduceHealth(getHero().getAttackPoints())) {
+                // Hero is attacked by the monster
+                getHero().reduceHealth(monster.getAttackPoints());
+                checkHeroDead();
                 return true;
             }
             // Else if the monster is dead remove it from the board and
@@ -539,6 +586,13 @@ public class Map {
         }
     }
 
+    /**
+     * Produces all possible moves that the player can take, given their position
+     * on the board
+     *
+     * @return an arrayList of strings describing possible moves
+     * @author Andrew Howes
+     */
     public ArrayList<String> allPossibleActions() {
         ArrayList<String> allPossibleActions = new ArrayList<>();
 
@@ -587,20 +641,18 @@ public class Map {
                 }
             }
 
-                // if there is something in the position, but the hero isn't facing
+            // if there is something in the position, but the hero isn't facing
             else {
-                    // Returns the way the character needs to move to face the object
-                    String directionToMove = Position.actions(posRef.fromHero,"Turn");
-                    // Get the string of what you can do if you turned to face it
-                    actionAtPosition = getObjectAt(posRef.position).actionOptions(false);
-                    // If there is action text add it
-                    if (!Objects.equals(actionAtPosition, "")) {
-                        allPossibleActions.add(directionToMove + actionAtPosition);
-                    }
+                // Returns the way the character needs to move to face the object
+                String directionToMove = Position.actions(posRef.fromHero, "Turn");
+                // Get the string of what you can do if you turned to face it
+                actionAtPosition = getObjectAt(posRef.position).actionOptions(false);
+                // If there is action text add it
+                if (!Objects.equals(actionAtPosition, "")) {
+                    allPossibleActions.add(directionToMove + actionAtPosition);
                 }
             }
+        }
         return allPossibleActions;
     }
-
-    public void getHelp(){}
 }

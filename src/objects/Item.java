@@ -23,6 +23,7 @@ public class Item extends GameObject {
      * @param description the items description
      * @param actionEffects either "health" or "attack" anything else will throw error
      * @param actionChange the amount to change health or attack by (can be negative)
+     * @author Andrew Howes
      */
     public Item(char charRepresentation, String name, String description, String actionEffects, int actionChange) {
         super(charRepresentation);
@@ -62,6 +63,7 @@ public class Item extends GameObject {
      * about the item
      * @param isFacing is the player facing the item
      * @return a relevant action for the item
+     * @author
      */
     @Override
     public String actionOptions(boolean isFacing) {

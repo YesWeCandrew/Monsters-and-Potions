@@ -75,6 +75,9 @@ public class MapTests {
 
 
     @Test
+    /**
+     * @author Andrew Howes
+     */
     void TestAllPossibleActions(){
         String allPos1 = testMap.allPossibleActions().toString();
         testMap.goRight();

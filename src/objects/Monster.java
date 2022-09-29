@@ -27,6 +27,7 @@ public class Monster extends LivingGameObject{
      * about the monster
      * @param isFacing is the player facing the item
      * @return a relevant action for the item
+     * @author Andrew Howes
      */
     @Override
     public String actionOptions(boolean isFacing) {

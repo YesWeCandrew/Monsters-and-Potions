@@ -22,6 +22,7 @@ public abstract class GameObject {
      * about the item
      * @param isFacing is the player facing the item
      * @return a relevant action for the item by default returns ""
+     * @author Andrew Howes
      */
     public String actionOptions(boolean isFacing) {
         return "";
