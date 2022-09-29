@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public class Map {
 
@@ -24,6 +25,15 @@ public class Map {
      */
     private Position heroPositionReference;
     private Cardinality heroFacing;
+
+    public void setHeroPositionReference(Position heroPositionReference) {
+        this.heroPositionReference = heroPositionReference;
+    }
+
+    public void setHeroFacing(Cardinality heroFacing) {
+        this.heroFacing = heroFacing;
+    }
+
     /**
     The map which is an array of arrays of GameObjects.
     X = column
@@ -35,6 +45,8 @@ public class Map {
     private static final short size = 8;
     private static final String WALL_CHARACTER = String.valueOf(new Wall().getChar());
     private static final String VACANT_CHARACTER = "_";
+    private static int X_SIZE;  // AKA number of columns/length
+    private static int Y_SIZE; // AKA number of rows/height
 
     /**
      * Generates the Map (and all the other objects using their relevant
@@ -46,16 +58,20 @@ public class Map {
 
         loadMapFromCSV(pathToCSV);
         loadEntitiesFromJSON(pathToJSON);
+        X_SIZE = map.length;
+        Y_SIZE = map[0].length;
 
     }
 
     /**
      * for testing purposes only
      *
+     * @param map the map to use
+     * @param heroPos the position of the hero
      */
     public Map(GameObject[][] map, Position heroPos) {
         this.heroPositionReference = heroPos;
-        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", null);
+        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", new ArrayList<>());
         heroFacing = Cardinality.NORTH;
         this.map = map;
     }
@@ -119,7 +135,7 @@ public class Map {
     /**
      * Constructs a blank game objectMap with walls based on the wall
      * layout of the given map csv file.
-     * @param pathToCSV the path to the map csv file
+     * @param pathToCSV the path to the map csv file.
      */
     private static void loadMapFromCSV(String pathToCSV) {
 
@@ -164,7 +180,7 @@ public class Map {
 
     /**
      * Saves the current map as a CSV to local storage.
-     * @param fileName the name of the new CSV filesave.
+     * @param fileName the name of the new CSV file to save.
      */
     public static void saveMapCSV(String fileName) {
         //initialise string array to collect map data.
@@ -419,14 +435,10 @@ public class Map {
         //Items
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
-        // use a for loop to add each item to the array list,
-        // note that itemSize is always set as 4 in the Hero class.
-        heroAttributes.put("items",null);
-        /**
-        for (int i = 0; i < hero.itemsSize; i++) {
+        // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
+        for (int i = 0; i < hero.getMaxItemsSize(); i++) {
             heroAttributes.put("item"+i,hero.getItem(i));
         }
-         **/
         //Construct the nested hero JSON Object.
         JSONObject jsonHero = new JSONObject();
         String heroPlaceHolder = "hero";
@@ -487,6 +499,8 @@ public class Map {
 
 
     /**
+     * deprecated
+     *
      * Returns the GameState as a string ready to display in terminal
      * @param x the x coordinate of the middle cell to be displayed
      * @param y the y coordinate of the middle cell to be displayed
@@ -602,43 +616,40 @@ public class Map {
     }
 
     /**
+     * Returns whether the position given is on the board
+     * @param position the position to check
+     * @return whether the position is on the board
+     * @author Andrew Howes
+     */
+    public boolean isOnBoard(Position position){
+        return (position.getX() < X_SIZE &
+                position.getY() < Y_SIZE &
+                position.getX() >= 0 &
+                position.getY() >= 0);
+    }
+
+    /**
      * Returns a boolean describing whether an object exists at the position.
      * NOTE: this function will return false if the position is off the board.
      * Use isEmpty to check if there is NO object and the cell exists.
      * @param position the position to check
      * @return true if an object exists, otherwise false
+     * @author Andrew Howes
      */
     public boolean hasObject(Position position) {
-        boolean hasObject = false;
-        int x = position.getX(), y = position.getY();
-        if (x < 0 || y < 0 || x >= map.length || y >= map.length) {
-            hasObject = map[position.getX()][position.getY()] != null;
-        }
-
-        return hasObject;
-
-        // none-functional code
-//        try {
-//            // this line ensures that the program will move to the catch lines
-//            // if the position is out of bounds, or if there is not an object.
-//            assert map[position.getX()][position.getY()] != null;
-//            return true;
-//        }
-//
-//        catch (Exception e) {
-//            return false;
-//        }
+        if (!isOnBoard(position)) {return false;}
+        else return getObjectAt(position) != null;
     }
 
     /**
-     * Checks first that the position is on the board, if it is the function
-     * returns the negation of hasObject(position). If it is off the board,
-     * the function returns false;
+     * Checks first that the position is on the board and has no objects.
+     * If it is off the board, the function returns false;
      * @param position the position to check for emptiness
      * @return whether the position is on the board and empty
+     * @author Andrew Howes
      */
     public boolean isEmpty(Position position) {
-        return !hasObject(position);
+        return isOnBoard(position) & !hasObject(position);
     }
 
     /**
@@ -651,7 +662,7 @@ public class Map {
     public boolean moveHero() {
 
         // If the position is empty (it exists, and it does not already have
-        // an object
+        // an object)
         if (isEmpty(positionInFrontOfHero())) {
             // Copy the hero to that point in the array
             setObjectAt(positionInFrontOfHero(),getObjectAt(heroPositionReference));
@@ -671,27 +682,43 @@ public class Map {
     }
 
     /**
-     * Turns the direction that the hero is facing by 90 degrees left
+     * Turns the hero to face west and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if west square is empty
+     * @return whether the hero successfully moved left after turning to face west
      */
-    public void turnHeroLeft() {
-        switch (heroFacing) {
-            case NORTH -> heroFacing = Cardinality.WEST;
-            case WEST -> heroFacing = Cardinality.SOUTH;
-            case SOUTH -> heroFacing = Cardinality.EAST;
-            case EAST -> heroFacing = Cardinality.NORTH;
-        }
+    public boolean goLeft() {
+        heroFacing = Cardinality.WEST;
+        return moveHero();
     }
 
     /**
-     * Turns the direction that the hero is facing by 90 degrees right
+     * Turns the hero to face north and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if north square is empty
+     * @return whether the hero successfully moved up after turning to face north
      */
-    public void turnHeroRight(){
-        switch (heroFacing) {
-            case NORTH -> heroFacing = Cardinality.EAST;
-            case EAST -> heroFacing = Cardinality.SOUTH;
-            case SOUTH -> heroFacing = Cardinality.WEST;
-            case WEST -> heroFacing = Cardinality.NORTH;
-        }
+    public boolean goUp() {
+        heroFacing = Cardinality.NORTH;
+        return moveHero();
+    }
+
+    /**
+     * Turns the hero to face east and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if east square is empty
+     * @return whether the hero successfully moved up after turning to face east
+     */
+    public boolean goRight() {
+        heroFacing = Cardinality.EAST;
+        return moveHero();
+    }
+
+    /**
+     * Turns the hero to face south and tries to move forwards.
+     * Will ALWAYS turn the hero. Will also moveHero if south square is empty
+     * @return whether the hero successfully moved up after turning to face south
+     */
+    public boolean goDown() {
+        heroFacing = Cardinality.SOUTH;
+        return moveHero();
     }
 
     /**
@@ -778,6 +805,69 @@ public class Map {
             // If there is no monster to attack
             return false;
         }
+    }
+
+    public ArrayList<String> allPossibleActions() {
+        ArrayList<String> allPossibleActions = new ArrayList<>();
+
+        // Stores information about the valid positions
+        class PositionRef {
+            public final Position position;
+            public final Cardinality fromHero;
+            public final boolean isFacing;
+
+            public PositionRef(Position position, Cardinality fromHero, boolean isFacing) {
+                this.position = position;
+                this.fromHero = fromHero;
+                this.isFacing = isFacing;
+            }
+        }
+
+//      Getting valid positions surrounding the hero (those on the board)
+        ArrayList<PositionRef> validPositions = new ArrayList<>();
+        Cardinality[] cards = {Cardinality.NORTH, Cardinality.EAST, Cardinality.SOUTH, Cardinality.WEST};
+
+        for (Cardinality card : cards) {
+            Position pos = getHeroPositionReference().positionInFront(card);
+            if (isOnBoard(pos)) {
+                PositionRef posRef = new PositionRef(pos, card, card == heroFacing);
+                validPositions.add(posRef);
+            }
+        }
+
+        for (PositionRef posRef : validPositions) {
+            String actionAtPosition;
+
+            // if there is nothing in that position
+            if (isEmpty(posRef.position)) {
+                // add that you can move in that direction
+                allPossibleActions.add(Position.actions(posRef.fromHero,"Move"));
+            }
+
+            // if there is something in the position, and the hero is facing it
+            else if (posRef.isFacing) {
+                // Get the string of what you can do when facing that option
+                actionAtPosition = getObjectAt(posRef.position).actionOptions(true);
+
+                // If there is action text add it
+                if (!Objects.equals(actionAtPosition, "")) {
+                    allPossibleActions.add(actionAtPosition);
+                }
+            }
+
+                // if there is something in the position, but the hero isn't facing
+            else {
+                    // Returns the way the character needs to move to face the object
+                    String directionToMove = Position.actions(posRef.fromHero,"Turn");
+                    // Get the string of what you can do if you turned to face it
+                    actionAtPosition = getObjectAt(posRef.position).actionOptions(false);
+                    // If there is action text add it
+                    if (!Objects.equals(actionAtPosition, "")) {
+                        allPossibleActions.add(directionToMove + actionAtPosition);
+                    }
+                }
+            }
+        return allPossibleActions;
     }
 
     public void getHelp(){}

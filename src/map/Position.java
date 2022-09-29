@@ -47,4 +47,21 @@ public class Position {
             default -> {return new Position(x-1,y);}
         }
     }
+
+    /**
+     * Returns the string instruction to move in the given direction
+     * @param cardinality the direction to move in
+     * @param action should be Move or Face. To describe type of action
+     * @return the string instruction to move that way
+     *
+     * @author Andrew Howes
+     */
+    public static String actions(Cardinality cardinality, String action) {
+        switch (cardinality) {
+            case NORTH -> {return "(↑) "+action+" up";}
+            case EAST -> {return "(→) "+action+" right";}
+            case SOUTH -> {return "(↓) "+action+" down";}
+            default -> {return "(←) "+action+" left";}
+        }
+    }
 }
