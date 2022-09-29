@@ -38,6 +38,7 @@ public class Position {
      * at [3,4] moving forwards means going to position [3,3].
      * @param cardinality the direction to move in
      * @return the position one ahead of current in the directon specified
+     * @author Andrew Howes
      */
     public Position positionInFront(Cardinality cardinality) {
         switch (cardinality) {
