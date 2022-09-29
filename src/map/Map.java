@@ -78,11 +78,13 @@ public class Map {
     public static void main(String[] args) {
 
         loadMapFromCSV("dummySave");
-        Item startingItems = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
-        Item startingItems2 = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
+        Item startingItems = new Item('I', "test-item", "heal", "health",  10);
+        Item startingItems2 = new Item('I', "test-item", "heal", "health",  10);
         ArrayList<Item> items = new ArrayList<>();
+        // add the item object instead the reference to the arraylist
         items.add(startingItems);
         items.add(startingItems2);
+        System.out.println(items);
         Hero hero = new Hero('H',"Greg",100,100,null,null,items);
         map[2][3] = hero;
         Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
@@ -269,7 +271,7 @@ public class Map {
         int attackPoints;
         String[] phrases;
         String description;
-        ArrayList<Item> items;
+        ArrayList<Item> items = null;
         String position;
         int x;
         int y;
@@ -286,6 +288,7 @@ public class Map {
                 description = heroObject.get("description").toString();
                 // if hero has no items, then items will be null
                 if(heroObject.get("items") != null){
+                    // store the item instead of the reference to the item
                     items = (ArrayList<Item>) heroObject.get("items");
                 } else {
                     items = null;
@@ -448,7 +451,7 @@ public class Map {
         // TODO 29/09/2022 add items to hero
         // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
         for (int i = 0; i < hero.getItemsSize(); i++) {
-            heroAttributes.put("item"+i,hero.getItem(i));
+            heroAttributes.put("item"+i,createJSONItemForHero(hero.getItem(i)));
         }
         //Construct the nested hero JSON Object.
         JSONObject jsonHero = new JSONObject();
@@ -489,6 +492,7 @@ public class Map {
         itemAttributes.put("position",position.getX() + ", "+ position.getY());
         itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
         itemAttributes.put("name",item.getName());
+        itemAttributes.put("description",item.getDescription());
         itemAttributes.put("actionEffects",item.getActionEffect().toString());
         itemAttributes.put("actionChange",item.getActionChange());
 
@@ -497,6 +501,19 @@ public class Map {
         String itemPlaceHolder = "item";
         jsonItem.put(itemPlaceHolder,itemAttributes);
 
+        return jsonItem;
+    }
+    public static JSONObject createJSONItemForHero(Item item){
+        JSONObject itemAttributes = new JSONObject();
+        itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
+        itemAttributes.put("name",item.getName());
+        itemAttributes.put("description",item.getDescription());
+        itemAttributes.put("actionEffects",item.getActionEffect().toString());
+        itemAttributes.put("actionChange",item.getActionChange());
+        //Construct the nested item JSON Object.
+        JSONObject jsonItem = new JSONObject();
+        String itemPlaceHolder = "item";
+        jsonItem.put(itemPlaceHolder,itemAttributes);
         return jsonItem;
     }
 
