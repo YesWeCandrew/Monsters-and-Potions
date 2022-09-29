@@ -42,41 +42,15 @@ public class Map {
      */
     private static GameObject[][] map;
     static final String SAVE_FILE_PATH = "src//saves";
-    private static final short size = 8;
     private static final String WALL_CHARACTER = String.valueOf(new Wall().getChar());
     private static final String VACANT_CHARACTER = "_";
     private static int X_SIZE;  // AKA number of columns/length
     private static int Y_SIZE; // AKA number of rows/height
 
-    /**
-     * Generates the Map (and all the other objects using their relevant
-     * constructors), using the csv and JSON (or other file type tbd) provided
-     * @param pathToCSV the path to the map csv file
-     * @param pathToJSON the path to the JSON or XML or whatever file
-     */
-    public Map(String pathToCSV,String pathToJSON) {
 
-        loadMapFromCSV(pathToCSV);
-        loadEntitiesFromJSON(pathToJSON);
-        X_SIZE = map.length;
-        Y_SIZE = map[0].length;
 
-    }
-
-    /**
-     * for testing purposes only
-     *
-     * @param map the map to use
-     * @param heroPos the position of the hero
-     */
-    public Map(GameObject[][] map, Position heroPos) {
-        this.heroPositionReference = heroPos;
-        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", new ArrayList<>());
-        heroFacing = Cardinality.NORTH;
-        this.map = map;
-    }
     public static void main(String[] args) {
-
+        loadXANDYSize("dummySave");
         loadMapFromCSV("dummySave");
         Item startingItems = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
         Item startingItems2 = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
@@ -95,6 +69,38 @@ public class Map {
         save(54,"anotherSave");
 
     }
+
+    /**
+     * Generates the Map (and all the other objects using their relevant
+     * constructors), using the csv and JSON (or other file type tbd) provided
+     * @param pathToCSV the path to the map csv file
+     * @param pathToJSON the path to the JSON or XML or whatever file
+     */
+    public Map(String pathToCSV,String pathToJSON) {
+        loadXANDYSize(pathToCSV);
+        loadMapFromCSV(pathToCSV);
+        loadEntitiesFromJSON(pathToJSON);
+
+    }
+
+    private static void loadXANDYSize(String pathToCSV) {
+        obtainXSize(pathToCSV);
+        obtainYSize(pathToCSV);
+    }
+
+    /**
+     * for testing purposes only
+     *
+     * @param map the map to use
+     * @param heroPos the position of the hero
+     */
+    public Map(GameObject[][] map, Position heroPos) {
+        this.heroPositionReference = heroPos;
+        map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", new ArrayList<>());
+        heroFacing = Cardinality.NORTH;
+        this.map = map;
+    }
+
 
 
 
@@ -146,7 +152,8 @@ public class Map {
 
         //Declare restricted size of the map
         // TODO: 2021-09-28  make this dynamic
-        GameObject[][] returnMap = initialiseBoard(size,size);
+        obtainYSize(pathToCSV);
+        GameObject[][] returnMap = initialiseBoard(X_SIZE,Y_SIZE);
 
         //Initialise parameters for csv file
         String line;
@@ -163,7 +170,7 @@ public class Map {
                 String[] gameRow = line.split(splitBy);
 
                 //Convert to game objects and place into the map.
-                for (int i = 0; i < gameRow.length && i < size; i++) {
+                for (int i = 0; i < gameRow.length && i < Y_SIZE; i++) {
 
                     if (gameRow[i].equals(WALL_CHARACTER)){
                         returnMap[i][row] = new Wall();
@@ -183,6 +190,42 @@ public class Map {
         map = returnMap;
     }
 
+    private static int obtainYSize(String pathToCSV) {
+        BufferedReader bufferedReader;
+        int count = 0;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(SAVE_FILE_PATH + "//" + pathToCSV +".csv"));
+            while(bufferedReader.readLine() != null)
+            {
+                count++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Y_SIZE = count;
+        return count;
+    }
+
+    private static int obtainXSize(String pathToCSV) {
+        BufferedReader br = null;
+        int size = 0;
+        try {
+            br = new BufferedReader(new FileReader(SAVE_FILE_PATH + "//" + pathToCSV + ".csv"));
+            String line = br.readLine();
+            String splitBy = ",";
+            String[] columns = line.split(splitBy);
+            size = columns.length;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            X_SIZE = size;
+        }
+        return size;
+    }
+
     /**
      * Saves the current map as a CSV to local storage.
      * @param fileName the name of the new CSV file to save.
@@ -192,10 +235,10 @@ public class Map {
         List<String[]> data = new ArrayList<>();
 
         //Convert map to String 2D Array
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < Y_SIZE; i++) {
             //Construct the CSV row.
-            String[] row = new String[size];
-            for (int j = 0; j < size; j++) {
+            String[] row = new String[X_SIZE];
+            for (int j = 0; j < X_SIZE; j++) {
                 if ((map[j][i] != null) && (map[j][i] instanceof Wall)) {
                     row[j] = WALL_CHARACTER;
                 } else {
@@ -360,8 +403,8 @@ public class Map {
 
         //Traverse through board
          // TODO 29/09/2022 make the size of the board dynamic
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < Y_SIZE; i++) {
+            for (int j = 0; j < X_SIZE; j++) {
 
                 // TODO: 24/09/2022   switch statement this
                 //CASE: Hero
