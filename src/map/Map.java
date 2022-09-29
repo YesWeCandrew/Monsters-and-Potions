@@ -78,7 +78,12 @@ public class Map {
     public static void main(String[] args) {
 
         loadMapFromCSV("dummySave");
-        Hero hero = new Hero('H',"Greg",100,100,null,null,null);
+        Item startingItems = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
+        Item startingItems2 = new Item('I', "test-item", "heal", Item.actionEffect.health.toString(),  10);
+        ArrayList<Item> items = new ArrayList<>();
+        items.add(startingItems);
+        items.add(startingItems2);
+        Hero hero = new Hero('H',"Greg",100,100,null,null,items);
         map[2][3] = hero;
         Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
         map [4][5] = monster;
@@ -279,7 +284,13 @@ public class Map {
                 phrases = (String[]) heroObject.get("phrases");
                 // TODO change the below two lines instead of add null to description and items
                 description = heroObject.get("description").toString();
-                items = heroObject.get("items") == null ? null : (ArrayList<Item>) heroObject.get("items");
+                // if hero has no items, then items will be null
+                if(heroObject.get("items") != null){
+                    items = (ArrayList<Item>) heroObject.get("items");
+                } else {
+                    items = null;
+                }
+                //items = heroObject.get("items") == null ? null : (ArrayList<Item>) heroObject.get("items");
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Hero hero = new Hero(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, items);
                 position = heroObject.get("position").toString();
@@ -344,7 +355,7 @@ public class Map {
         ArrayList<Monster> monsters = new ArrayList<>();
         ArrayList<Position> monsterPositions = new ArrayList<>();
 
-        ArrayList<Item> items = new ArrayList<>();
+        ArrayList<Item> itemsOnBoard = new ArrayList<>();
         ArrayList<Position> itemPositions = new ArrayList<>();
 
         //Traverse through board
@@ -359,14 +370,14 @@ public class Map {
                  heroPosition = new Position(j,i);
                 }
                 //CASE: Monster
-                else if (map[j][i] instanceof Monster monster) {
-                    monsters.add(monster);
+                else if (map[j][i] instanceof Monster) {
+                    monsters.add((Monster) map[j][i]);
                   monsterPositions.add(new Position(j,i));
                 }
                 //CASE: Item:
                 else if (map[j][i] instanceof Item) {
                     Item item = (Item) map[j][i];
-                    items.add(item);
+                    itemsOnBoard.add(item);
                     itemPositions.add(new Position(j,i));
                 }
                 // TODO CASE: Empty??
@@ -388,8 +399,8 @@ public class Map {
             jsonElements.add(createJSONMonster(monsters.get(i), monsterPositions.get(i)));
         }
         //Create items json objects.
-        for (int i = 0; i < items.size(); i++) {
-            JSONObject itemObject = createJSONItem(items.get(i),itemPositions.get(i));
+        for (int i = 0; i < itemsOnBoard.size(); i++) {
+            JSONObject itemObject = createJSONItem(itemsOnBoard.get(i),itemPositions.get(i));
             jsonElements.add(itemObject);
         }
 
@@ -436,7 +447,7 @@ public class Map {
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
         // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
-        for (int i = 0; i < hero.getMaxItemsSize(); i++) {
+        for (int i = 0; i < hero.getItemsSize(); i++) {
             heroAttributes.put("item"+i,hero.getItem(i));
         }
         //Construct the nested hero JSON Object.
