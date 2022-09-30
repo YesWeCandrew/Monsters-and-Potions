@@ -8,11 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -93,8 +89,18 @@ public class Map {
         loadXANDYSize(pathToCSV);
         loadMapFromCSV(pathToCSV);
         loadEntitiesFromJSON(pathToJSON);
-
     }
+
+    /**
+     * Generates the Map without any objects from CSV. Just for testing.
+     * @param pathToCSV the path to the csv file
+     * @author Andrew Howes
+     */
+    public Map(String pathToCSV) {
+        loadXANDYSize(pathToCSV);
+        loadMapFromCSV(pathToCSV);
+    }
+
 
     private static void loadXANDYSize(String pathToCSV) {
         obtainXSize(pathToCSV);
@@ -675,7 +681,7 @@ public class Map {
      * Will return false if:
      * - The position is off the board, or
      * - There is already an object at the given position
-     * To replace an object, first use the removeObjectAt function, then
+     * To replace an object, first use the clearPosition function, then
      * call this function.
      * @param position the position to place the object
      * @param object the object to place
@@ -683,12 +689,13 @@ public class Map {
      */
     public boolean setObjectAt(Position position, GameObject object) {
         boolean set = false;
-        if(isEmpty(position)) {
+        if (isEmpty(position)) {
             map[position.getX()][position.getY()] = object;
             set = true;
         }
 
         return set;
+    }
 
 //        // Wrapped in try block in case the position is off the board
 //        // The assert function also ensures that the catch is called if there
@@ -703,7 +710,7 @@ public class Map {
 //        } catch (Exception e) {
 //            return false;
 //        }
-    }
+
 
     /**
      * Sets the given position to null.
@@ -859,6 +866,9 @@ public class Map {
                     item.getName().equals("Amulet")) {
                 heroEscaped = true;
             }
+
+            // Remove the item from the map
+            if (success) {clearPosition(positionInFrontOfHero());}
 
             // regardless of whether you've won or died or just still going
             // returns success because you picked up an item!
@@ -1018,5 +1028,56 @@ public class Map {
             }
         }
         return allPossibleActions;
+    }
+
+    public GameObject[][] getMap() {
+        return map;
+    }
+
+    public int getXSize() {
+        return X_SIZE;
+    }
+
+    public int getYSize() {
+        return Y_SIZE;
+    }
+
+    /**
+     * Iterates over each row and column to generate a string representation
+     * of the map
+     * @return the map as a string.
+     * @author Andrew Howes
+     */
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int y = 0; y < Y_SIZE; y ++) {
+            for (int x = 0; x < X_SIZE; x++) {
+                if (map[x][y] == null) {stringBuilder.append(" ");}
+                else {stringBuilder.append(map[x][y].getChar());}
+            }
+            if (y < Y_SIZE-1) {stringBuilder.append("\n");}
+        }
+
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Compares two maps. However, as map is static, it cannot be compared.
+     * Really only assess heroPositionReference, heroFacing and heroEscaped.
+     * @param o the object to compare
+     * @return whether heroPositionReference, heroFacing and heroEscaped are the same.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Map map = (Map) o;
+        return Objects.equals(heroPositionReference, map.heroPositionReference) && heroFacing == map.heroFacing && Objects.equals(heroEscaped, map.heroEscaped);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(heroPositionReference, heroFacing, heroEscaped);
     }
 }
