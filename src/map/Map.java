@@ -1062,29 +1062,22 @@ public class Map {
         return stringBuilder.toString();
     }
 
+    /**
+     * Compares two maps. However, as map is static, it cannot be compared.
+     * Really only assess heroPositionReference, heroFacing and heroEscaped.
+     * @param o the object to compare
+     * @return whether heroPositionReference, heroFacing and heroEscaped are the same.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Map map = (Map) o;
-        boolean heroEscapedBool = Objects.equals(heroEscaped, map.heroEscaped);
-        boolean heroPositionReferenceBool = Objects.equals(heroPositionReference, map.heroPositionReference);
-        boolean heroFacingBool = heroFacing == map.heroFacing;
-        boolean mapBool = X_SIZE == map.getXSize() && Y_SIZE == map.getYSize();
-
-        if (!(heroEscapedBool && heroPositionReferenceBool && heroFacingBool && mapBool)) {
-            return false;
-        }
-
-        for (int y = 0; y < Y_SIZE; y++) {
-            for (int x = 0; x < X_SIZE; x++) {
-                if (!(Objects.equals(getMap()[x][y],map.getMap()[x][y]))) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return Objects.equals(heroPositionReference, map.heroPositionReference) && heroFacing == map.heroFacing && Objects.equals(heroEscaped, map.heroEscaped);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(heroPositionReference, heroFacing, heroEscaped);
+    }
 }
