@@ -1,5 +1,9 @@
 package objects;
 
+import map.Position;
+import objects.GameObject;
+import org.json.simple.JSONObject;
+
 public class Item extends GameObject {
 
     private final String name;
@@ -44,7 +48,9 @@ public class Item extends GameObject {
         health,
         attack
     }
-
+    public String getCharRepresentation() {
+        return String.valueOf(getChar());
+    }
     public String getName() {
         return name;
     }
@@ -56,7 +62,8 @@ public class Item extends GameObject {
     public int getActionChange() {return actionChange;}
 
     public actionEffect getActionEffect() {return actionEffects;}
-
+    public String getActionEffectString() {return actionEffects.toString();}
+    public String getActionChangeString() {return Integer.toString(actionChange);}
     /**
      * Helper function for Map.allPossibleActions()
      * Given an item and whether the player is facing it, it returns information
