@@ -69,6 +69,8 @@ public class Map {
         hero.pickUpItem(item2);
         //loadEntitiesFromJSON("99-test-2022-09-26");
         save(54,"anotherSave");
+        loadMapFromCSV("54-anotherSave");
+        loadEntitiesFromJSON("54-anotherSave");
 
     }
 
@@ -337,9 +339,17 @@ public class Map {
                 name = heroObject.get("name").toString();
                 healthPoints = Integer.parseInt(heroObject.get("healthPoints").toString());
                 attackPoints = Integer.parseInt(heroObject.get("attackPoints").toString());
-                phrases = (String[]) heroObject.get("phrases");
+                if(heroObject.get("phrases") != null) {
+                    phrases = heroObject.get("phrases").toString().split(",");
+                } else {
+                    phrases = null;
+                }
                 // TODO change the below two lines instead of add null to description and items
-                description = heroObject.get("description").toString();
+                if(heroObject.get("description") != null){
+                    description = heroObject.get("description").toString();
+                } else {
+                    description = null;
+                }
                 // if hero has no items, then items will be null
                 if(heroObject.get("items") != null){
                     // store the item instead of the reference to the item
