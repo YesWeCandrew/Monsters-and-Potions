@@ -53,12 +53,12 @@ public class Map {
     public static void main(String[] args) {
         loadXANDYSize("dummySave");
         loadMapFromCSV("dummySave");
-        Item startingItems = new Item('I', "test-item", "heal", "health",  10);
+        Item startingItems = new Item('I', "test-item", null, "health",  10);
         Item startingItems2 = new Item('I', "test-item", "heal", "health",  10);
         ArrayList<Item> items = new ArrayList<>();
         items.add(startingItems);
         items.add(startingItems2);
-        Hero hero = new Hero('H',"Greg",100,100,null,null,items);
+        Hero hero = new Hero('H',"Greg",100,100,null,null,null);
         map[2][3] = hero;
         Monster monster = new Monster('M',"The big monster",30,40,null,"A big monster",null);
         map [4][5] = monster;
@@ -69,6 +69,8 @@ public class Map {
         hero.pickUpItem(item2);
         //loadEntitiesFromJSON("99-test-2022-09-26");
         save(54,"anotherSave");
+        loadMapFromCSV("54-anotherSave");
+        loadEntitiesFromJSON("54-anotherSave");
 
     }
 
@@ -337,9 +339,17 @@ public class Map {
                 name = heroObject.get("name").toString();
                 healthPoints = Integer.parseInt(heroObject.get("healthPoints").toString());
                 attackPoints = Integer.parseInt(heroObject.get("attackPoints").toString());
-                phrases = (String[]) heroObject.get("phrases");
+                if(heroObject.get("phrases") != null) {
+                    phrases = heroObject.get("phrases").toString().split(",");
+                } else {
+                    phrases = null;
+                }
                 // TODO change the below two lines instead of add null to description and items
-                description = heroObject.get("description").toString();
+                if(heroObject.get("description") != null){
+                    description = heroObject.get("description").toString();
+                } else {
+                    description = null;
+                }
                 // if hero has no items, then items will be null
                 if(heroObject.get("items") != null){
                     // store the item instead of the reference to the item
@@ -361,10 +371,24 @@ public class Map {
                 name = monsterObject.get("name").toString();
                 healthPoints = Integer.parseInt(monsterObject.get("healthPoints").toString());
                 attackPoints = Integer.parseInt(monsterObject.get("attackPoints").toString());
-                phrases = (String[]) monsterObject.get("phrases");
+                if(monsterObject.get("phrases") != null) {
+                    phrases = monsterObject.get("phrases").toString().split(",");
+                } else {
+                    phrases = null;
+                }
                 // TODO change the below two lines instead of add null to description
-                description = monsterObject.get("description").toString();
-                Item dropItem = (Item) monsterObject.get("item");
+                if(monsterObject.get("description") != null){
+                    description = monsterObject.get("description").toString();
+                } else {
+                    description = null;
+                }
+                Item dropItem = null;
+                if(monsterObject.get("items") != null){
+                    // store the item instead of the reference to the item
+                    dropItem = (Item) monsterObject.get("item");
+                } else {
+                    dropItem = null;
+                }
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Monster monster = new Monster(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, dropItem);
                 position = monsterObject.get("position").toString();
