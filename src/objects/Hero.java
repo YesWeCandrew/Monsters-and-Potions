@@ -27,12 +27,19 @@ public class Hero extends LivingGameObject{
      * @author Andrew Howes
      */
     public boolean pickUpItem(Item item){
-        if (items.size() >= maxItemsSize) {
+        // if items is null, create a new arraylist
+        if(items == null){
+            items = new ArrayList<>();
+            items.add(item);
+            return true;
+        }
+        else if (items.size() >= maxItemsSize) {
             return false;
         }
-
-        // Adding the item to the inventory.
-        items.add(item);
+        else{
+            // Adding the item to the inventory.
+            items.add(item);
+        }
 
         // Taking the action as described by the items actionEffect and actionChange
         switch (item.getActionEffect()) {
