@@ -16,14 +16,14 @@ public class MapTests {
 
     /*
     TestMap:
-    _,X,X,X,X,X,X,X
-    _,X,_,_,_,_,_,X
-    _,X,_,X,_,X,_,X
-    _,X,_,X,_,X,_,X
-    $,X,X,X,_,X,_,X
-    !,^,_,_,_,X,_,_
-    _,X,_,_,_,X,_,X
-    X,X,X,X,X,X,X,X
+    _,#,#,#,#,#,#,#
+    _,#,_,_,_,_,_,#
+    _,#,_,#,_,#,_,#
+    _,#,_,#,_,#,_,#
+    $,#,#,#,_,#,_,#
+    !,^,_,_,_,#,_,_
+    _,#,_,_,_,#,_,#
+    #,#,#,#,#,#,#,#
 
     Where:
     ! = Hero (sam)
@@ -210,19 +210,26 @@ public class MapTests {
     void writeReadTest() {
         String firstMap = testMap.toString();
         Map.save(99,"testMapSave");
-        new Map("99-testMapSave","99-testMapSave");
-        String firstReadMapString = testMap.toString();
+        Map readMap = new Map("99-testMapSave","99-testMapSave");
+        String firstReadMapString = readMap.toString();
+
+        // Ensures that heroPositionReference, heroFacing and heroEscaped
+        // are equal
+        assertEquals(testMap,readMap);
 
         setUpMap();
 
         testMap.pickUpItem();
         String secondMap = testMap.toString();
         Map.save(99,"testMapSave");
-        new Map("99-testMapSave","99-testMapSave");
-        String secondReadMapString = testMap.toString();
+        readMap = new Map("99-testMapSave","99-testMapSave");
+        String secondReadMapString = readMap.toString();
 
-        setUpMap();
+        // Ensures that heroPositionReference, heroFacing and heroEscaped
+        // are equal
+        assertEquals(testMap,readMap);
 
+        // Ensures that the objects exist and are in right place
         assertEquals(firstMap,firstReadMapString);
         assertEquals(secondMap,secondReadMapString);
     }
