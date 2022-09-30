@@ -65,6 +65,7 @@ public class Map {
         map [4][6] = item;
         Item item2 = new Item('I',"Fancy Health Potion","Can kill and stab. its a good potion.","health",0);
         map [0][1] = item;
+        hero.pickUpItem(item2);
         //loadEntitiesFromJSON("99-test-2022-09-26");
         save(54,"anotherSave");
 
