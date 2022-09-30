@@ -7,7 +7,6 @@ package objects;
 public class Wall extends GameObject {
 
     public Wall() {
-//        super('□'); // Any UTF-16 character should work
         super('#');
     }
 }

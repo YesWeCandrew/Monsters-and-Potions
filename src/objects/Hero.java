@@ -24,6 +24,7 @@ public class Hero extends LivingGameObject{
      * If the object cannot be added (eg. inventory is  full) returns false
      * @param item the item to add
      * @return whether the object was successfully added
+     * @author Andrew Howes
      */
     public boolean pickUpItem(Item item){
         if (items.size() >= maxItemsSize) {
@@ -49,6 +50,7 @@ public class Hero extends LivingGameObject{
      *
      * @param x the number in the array to remove (starting at 0)
      * @return the item if it was removed successfully, or null otherwise
+     * @author Andrew Howes
      */
     public Item discardItem(int x) {
         Item item;
@@ -73,6 +75,7 @@ public class Hero extends LivingGameObject{
      * Returns the nth item in the item list.
      *
      * @param n the (0 start) index in the array of the item to return
+     * @author Andrew Howes
      */
     public Item getItem(int n) {
         return this.items.get(n);
