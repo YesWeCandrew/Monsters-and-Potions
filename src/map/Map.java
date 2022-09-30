@@ -47,7 +47,7 @@ public class Map {
     private static int X_SIZE;  // AKA number of columns/length
     private static int Y_SIZE; // AKA number of rows/height
 
-<<<<<<< src/map/Map.java
+//<<<<<<< src/map/Map.java
 
 
     public static void main(String[] args) {
