@@ -1,5 +1,7 @@
 package objects;
 
+import main.Main;
+
 import java.util.Random;
 
 public class Monster extends LivingGameObject{
@@ -19,8 +21,6 @@ public class Monster extends LivingGameObject{
         return itemToDrop;
     }
 
-
-
     /**
      * Helper function for Map.allPossibleActions()
      * Given an item and whether the player is facing it, it returns information
@@ -30,9 +30,22 @@ public class Monster extends LivingGameObject{
      * @author Andrew Howes
      */
     @Override
-    public String actionOptions(boolean isFacing) {
+    public String actionOptions(Hero hero, boolean isFacing) {
         if (isFacing) {
+            Main.listeners.add(c -> {
+                boolean caught = false;
+                if(Character.toLowerCase(c) == 'a' && hero != null) {
+                    changeHealth(-25);
+                    hero.changeAttack(-25);
+                    caught = true;
+                }
+
+                return caught;
+            });
             return "(A) Attack " + getName();
-        } else return " to face " + getName();
+        }
+        else {
+            return " to face " + getName();
+        }
     }
 }

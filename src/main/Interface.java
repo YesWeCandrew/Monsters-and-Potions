@@ -19,9 +19,10 @@ public class Interface {
     ViewPort mapView;
     Pane inv_stats, interact_tooltip;
 
+    private final int viewPortRadius = 5;
+
     public Interface(Map map) {
         this.map = map;
-
         this.main = createMain();
     }
 
@@ -29,13 +30,23 @@ public class Interface {
         this(null);
     }
 
+    /**
+     * singleton function for ensuring that the main variable exists and is not overwritten
+     *
+     * @return
+     */
     private Pane getMain() {
         return main == null ? createMain() : main;
     }
 
+    /**
+     * main function which determines the hard coded placement of each element relative to the main pane,
+     *
+     *
+     * @return the main pane
+     */
     private Pane createMain() {
         Pane main = new Pane();
-        int viewPortRadius = 5;
 
         int x = 0;
         // inventory + stats
@@ -58,8 +69,8 @@ public class Interface {
 
         // interactions + tooltip view
         this.interact_tooltip = new Pane();
-        createInteractions(1, 0, 25, 4);
-        createToolTip(1, 5, 25);
+        createInteractions(2, 0, 25, 4);
+        createToolTip(2, 5, 25);
         interact_tooltip.relocate(rightSeperator.getX() + 1, 0);
         interact_tooltip.maximizeSize();
 
@@ -107,7 +118,7 @@ public class Interface {
     }
 
     private void createInteractions(int x, int y, int maxWidth, int maxHeight) {
-        String text = "testing testing, one, two, three. hello everybody, here is something"; // TODO need to get interactions text (i.e. quests, phrases, ...)
+        String text = "Objective: " + System.lineSeparator() + " Escape the maze by finding the magic Amulet."; // TODO need to get interactions text (i.e. quests, phrases, ...)
 
         TextField textField = new TextField(maxWidth, maxHeight);
         textField.setText(text);
@@ -123,27 +134,36 @@ public class Interface {
         Separator leftSeperator = new Separator(5, false, '|');
         leftSeperator.relocate(x, y + 1);
 
-        ArrayList<String> optionStrings = new ArrayList<>(Arrays.asList("(W) Move North", "(S) Move South", "(D) Move East", "(A) Move West")); // TODO need to get options from map (i.e. move left, attack, flee)
-        TextList options = new TextList(optionStrings.size(), maxWidth - 4);
+        TextList options = new TextList(5, maxWidth - 4);
+        options.setListener(() -> {
+            ArrayList<String> optionStrings = map.allPossibleActions();
+            String[] a = optionStrings.toArray(new String[optionStrings.size()]);
+            return optionStrings.toArray(new String[optionStrings.size()]);
+        });
         options.relocate(x + 2, y + 1);
 
         Separator rightSeperator = new Separator(5, false, '|');
         rightSeperator.relocate(x + options.getWidth(), y + 1);
 
-        for(String optionText : optionStrings) {
-            options.addText(optionText);
-        }
-
         this.interact_tooltip.addElements(toolTipText, leftSeperator, options, rightSeperator);
     }
 
-    public void displayUI() {
+    /**
+     * method to be called each frame to display the up-to-data UI in its entirety.
+     * this function will display the main pane on its own but will return the string
+     * which is printed for testing purposes.
+     *
+     * @return the resulting string to be rendered (for testing purposes)
+     */
+    public String displayUI() {
         getMain();
         String[] render = main.getStringRender();
         String result = String.join(System.lineSeparator(), render);
 
         System.out.println(result);
         System.out.flush();
+
+        return result;
     }
 
     /**
@@ -159,182 +179,21 @@ public class Interface {
 
         Map map = new Map(area, new Position(2, 2));
         Interface display = new Interface(map);
-        display.displayUI();
-        System.out.println();
 
-        map.moveHero();
         display.displayUI();
-        System.out.println();
+        map.goDown();
 
-        map.getHero().pickUpItem(new Item('P', "Health Potion", "Test potion", "health", 0));
-        map.goLeft();
-        map.moveHero();
-        display.displayUI();
         System.out.println();
+        System.out.print("command input: ");
+        while (map.heroEscaped == null) {
+            if(Main.getKeyEvent()) {
+                for(int i = 0; i < 10; i++)
+                    System.out.println(); // visual spacing between frames
+
+                display.displayUI();
+                System.out.println();
+            }
+            System.out.print("command input: ");
+        }
     }
-
-//    /**
-//     * displays a complete frame of the full UI of the the game (inventory and tool-tips included)
-//     *
-//     */
-//    public void displayUI() {
-//        int paddingSize = 1, mapSize = 5;
-//        Position heroPos = map.getHeroPositionReference();
-//
-//        char[][] inventory, map, side, padding;
-//
-//        // getting structures
-//        inventory = inventoryToArray();
-//        map = mapToArray(heroPos.getX(), heroPos.getY(), mapSize);
-//        side = sideToArray();
-//        padding = paddingToArray(paddingSize);
-//        int uiHeight = mapSize * 2 + 1;
-//
-//        // combining structures into single grid
-//        char[][][] layout = {inventory, padding, map, padding, side};
-//        char[][] ui = new char[layout.length][uiHeight];
-//
-//        int i = 0, lowerBound = 0, upperBound = 0;
-//        for(int j = 0; j < layout.length; j++) {
-//            upperBound += layout[j].length;
-//            for(; i < upperBound; i++) {
-//                ui[i] = layout[j][i - lowerBound];
-//            }
-//            lowerBound = upperBound;
-//        }
-//
-//        // merging columns and rows into strings
-//        String result = "";
-//        for(int row = 0; row < ui.length; row++) {
-//            for(int column = 0; column < ui[row].length; column++) {
-//                result += ui[row][column];
-//            }
-//            result += System.lineSeparator();
-//        }
-//
-//        System.out.println();
-//        System.out.println(result);
-//        System.out.println();
-//    }
-//
-//    private char[][] inventoryToArray() {
-//        char[][] area = new char[this.map.getHeight()][15];
-//
-//        char borderChar = '@';
-//        char[] horizontalBorder = getDuplicateCharArray(borderChar, area[0].length);
-//
-//        int i = 1, j = 0;
-//        area[0] = horizontalBorder.clone(); // Top Border
-//        for(; i < area.length; i++) {
-//            area[i][j] = borderChar; // Left Border
-//
-//            for(; j < area[i].length ; j++) {
-//                area[i][j] = ' ';
-//            }
-//
-//            area[i][j] = borderChar; // Right Border + New Line
-//        }
-//        area[i] = horizontalBorder.clone(); // Bottom Border
-//
-//        return area;
-//    }
-//
-//    /**
-//     * the map as visable to player given the hero's x and y position and a specified size
-//     *
-//     * @param x
-//     * @param y
-//     * @param size
-//     * @return
-//     */
-//    private char[][] mapToArray(int x, int y, int size) {
-//        assert size >= 1;
-//        assert x >= 0 && x <= map.getWidth();
-//        assert y >= 0 && y <= map.getHeight();
-//
-//        int d = size * 2 + 1;
-//        char borderChar = '@';
-//        char[] horizontalBorder = getDuplicateCharArray(borderChar, d + 2);
-//        // char to display if location is outside of map
-//        // (i.e. player is near an edge or corner of the map and can see outside the map bounds)
-//        char OutOfBoundsChar = (char)(new Wall().getChar());
-//
-//        char[][] area = new char[d + 2][d + 2];
-//        int a = 0, b = 0;
-//
-//        area[a] = horizontalBorder.clone(); // Top Border
-//        a++;
-//        for(int i = x - size; i <= d; i++) {
-//            area[b][a] += borderChar; // Left Border
-//
-//            for(int j = y - size; j <= d; j++) {
-//                b++;
-//                area[b][a] = j < 0 ? OutOfBoundsChar :
-//                             i < 0 ? OutOfBoundsChar :
-//                             j > map.getWidth() ? OutOfBoundsChar :
-//                             i > map.getHeight() ? OutOfBoundsChar :
-//                             map.getObjectAt(new Position(j, i)).getChar();
-//            }
-//
-//            area[b][a] = borderChar; // Right Border + New Line
-//            a++;
-//        }
-//        area[a] = horizontalBorder.clone(); // Bottom Border
-//
-//        return area;
-//    }
-//
-//    /**
-//     * used for tool-tips and speech interactions, as well as options tab
-//     *
-//     * @return
-//     */
-//    private char[][] sideToArray() {
-//        char[][] area = new char[this.map.getHeight()][25];
-//
-//        char borderChar = '@';
-//        char[] horizontalBorder = getDuplicateCharArray(borderChar, area[0].length);
-//
-//        int i = 0, j = 0;
-//        area[0] = horizontalBorder.clone(); // Top Border
-//        for(; i < area.length; i++) {
-//            area[i][j] += borderChar; // Left Border
-//
-//            for(; j < area[i].length ; j++) {
-//                area[i][j] += ' ';
-//            }
-//
-//            area[i][j] = borderChar; // Right Border + New Line
-//        }
-//        area[i] = horizontalBorder.clone(); // Bottom Border
-//
-//        return area;
-//    }
-//
-//    /**
-//     * aesthetic padding between ui sections for clarity
-//     *
-//     * @param paddingSize
-//     * @return
-//     */
-//    private char[][] paddingToArray(int paddingSize) {
-//        char[][] area = new char[this.map.getHeight() + 2][paddingSize];
-//        char[] blankColumn = getDuplicateCharArray(' ', this.map.getHeight());
-//
-//        for(int i = 0; i < paddingSize; i++)
-//            area[i] = blankColumn;
-//
-//        return area;
-//    }
-//
-//    /**
-//     * returns and array of duplicate chars
-//     *
-//     * @param duplicate
-//     * @param size
-//     * @return
-//     */
-//    private char[] getDuplicateCharArray(char duplicate, int size) {
-//        return String.valueOf(duplicate).repeat(size).toCharArray();
-//    }
 }

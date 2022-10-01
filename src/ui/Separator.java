@@ -6,6 +6,13 @@ public class Separator extends Element {
     boolean horizontal;
     char character;
 
+    /**
+     * returns a visual separator to separate different elements on a pane
+     *
+     * @param length the length of a separator
+     * @param horizontal whether the separator is horizontal or vertical
+     * @param character the separator character which will be displayed
+     */
     public Separator(int length, boolean horizontal, char character) {
         this.length = length;
         this.horizontal = horizontal;
@@ -28,8 +35,7 @@ public class Separator extends Element {
     }
 
     @Override
-    public void maximizeSize() {
-        setWidth(horizontal ? length : 1);
-        setHeight(horizontal ? 1 : length);
+    protected Bounds getMaximizedSize() {
+        return new Bounds(horizontal ? length : 1, horizontal ? 1 : length);
     }
 }

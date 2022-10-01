@@ -10,7 +10,7 @@ public class ItemTests {
         Item testItem = new Item('%', "testItem", "This item is a test.",
                 "health", 5);
 
-        assertEquals("(P) Pick up testItem - This item is a test.", testItem.actionOptions(true));
-        assertEquals(" to face testItem", testItem.actionOptions(false));
+        assertEquals("(P) Pick up testItem - This item is a test.", testItem.actionOptions(null, true));
+        assertEquals(" to face testItem", testItem.actionOptions(null,false));
     }
 }

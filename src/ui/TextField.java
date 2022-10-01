@@ -8,10 +8,21 @@ public class TextField extends Element {
     Listener<String> listener;
     String[] wrappedText = null;
 
+    /**
+     *
+     *
+     * @param textMaxWidth
+     * @param lineNum
+     */
     public TextField(int textMaxWidth, int lineNum) {
         super(textMaxWidth, lineNum);
     }
 
+    /**
+     *
+     *
+     * @param text
+     */
     public TextField(String text) {
         super();
         this.text = text;
@@ -24,13 +35,21 @@ public class TextField extends Element {
     }
 
     @Override
-    public void maximizeSize() {
-        if(listener != null) {
-            this.wrappedText = wrapText(listener.retrieve());
+    protected Bounds getMaximizedSize() {
+        if(this.wrappedText == null) {
+            if (listener != null) {
+                this.wrappedText = wrapText(listener.retrieve());
+            } else if (text != null) {
+                this.wrappedText = wrapText(text);
+            }
         }
-        else if(text != null) {
-            this.wrappedText = wrapText(text);
+
+        int maxWidth = 0, maxHeight = this.wrappedText.length;
+        for(String s : this.wrappedText) {
+            maxWidth = s != null ? Math.max(maxWidth, s.length()) : maxWidth;
         }
+
+        return new Bounds(maxWidth, maxHeight);
     }
 
     public void setText(String text) {
@@ -45,6 +64,12 @@ public class TextField extends Element {
         return text;
     }
 
+    /**
+     *
+     *
+     * @param text
+     * @return
+     */
     private String[] wrapText(String text) {
         ArrayList<String> wrapped = new ArrayList<>();
         wrapped.add("");
@@ -58,9 +83,11 @@ public class TextField extends Element {
                 index++;
             }
 
-            String prev = wrapped.get(index);
-            wrapped.set(index, prev + (prev.equals("") ? "" : " ") + word);
-            length += word.length() + (prev.equals("") ? 0 : 1);
+            if(!word.equals(System.lineSeparator())) {
+                String prev = wrapped.get(index);
+                wrapped.set(index, prev + (prev.equals("") ? "" : " ") + word);
+                length += word.length() + (prev.equals("") ? 0 : 1);
+            }
         }
 
         if(getWidth() != -1) {

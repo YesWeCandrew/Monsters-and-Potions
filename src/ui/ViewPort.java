@@ -5,6 +5,9 @@ import map.Position;
 import objects.GameObject;
 import objects.Wall;
 
+/**
+ *
+ */
 public class ViewPort extends Element {
 
     Map map;
@@ -12,6 +15,13 @@ public class ViewPort extends Element {
     boolean bordered;
     char borderChar = '@';
 
+    /**
+     *
+     *
+     * @param map
+     * @param viewRadius
+     * @param bordered
+     */
     public ViewPort(Map map, int viewRadius, boolean bordered) {
         this.map = map;
         this.viewRadius = viewRadius;
@@ -22,8 +32,22 @@ public class ViewPort extends Element {
         setHeight(bordered ? diameter + 2 : diameter);
     }
 
+    /**
+     *
+     *
+     * @param map
+     */
     public ViewPort(Map map) {
         this(map, 0, true);
+    }
+
+    /**
+     *
+     *
+     * @param viewRadius
+     */
+    public void setViewRadius(int viewRadius) {
+        this.viewRadius = viewRadius;
     }
 
     @Override
@@ -63,12 +87,7 @@ public class ViewPort extends Element {
     }
 
     @Override
-    public void maximizeSize() {
-        setWidth(bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1);
-        setHeight(bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1);
-    }
-
-    public void setViewRadius(int viewRadius) {
-        this.viewRadius = viewRadius;
+    protected Bounds getMaximizedSize() {
+        return new Bounds(bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1, bordered ? viewRadius * 2 + 3 : viewRadius * 2 + 1);
     }
 }

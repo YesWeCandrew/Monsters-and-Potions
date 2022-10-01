@@ -5,6 +5,7 @@ import map.Map;
 public class Main {
 
     static Interface display;
+    public static ArrayList<KeyListener> listeners = new ArrayList<>();
 
     /**
      * Runs a title sequence, lets the user view instructions or load a game

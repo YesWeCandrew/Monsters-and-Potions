@@ -32,11 +32,16 @@ public class StatisticsBar extends Element {
     }
 
     @Override
-    public void maximizeSize() {
-        setWidth(maxWidth);
-        setHeight(1);
+    protected Bounds getMaximizedSize() {
+        return new Bounds(maxWidth, 1);
     }
 
+    /**
+     * sets the value of the statistics bar which will be rounded to fit within the allowed bounds of the statistics bar
+     *
+     * @param value the value to be set
+     * @return true if the value was within the bounds, false if the value had to be adjusted to fit within the bounds
+     */
     public boolean setValue(int value) {
         boolean inBounds = value >= min && value <= max;
         this.value = Math.min(this.max, Math.max(this.min, value));
@@ -44,6 +49,11 @@ public class StatisticsBar extends Element {
         return inBounds;
     }
 
+    /**
+     * sets a listener which can get a value
+     *
+     * @param listener which defines the function to retrieve the current value the statistics bar should represent
+     */
     public void setListener(Listener<Integer> listener) {
         this.listener = listener;
     }
@@ -52,10 +62,23 @@ public class StatisticsBar extends Element {
         return value;
     }
 
+    /**
+     * gets the ratio of value to max value in a string form i.e
+     *
+     * "(56/100)" or "(14/100)"
+     *
+     * @return the string ratio of the value and the max value
+     */
     private String getRatio() {
         return "(" + value + "/" + max + ")";
     }
 
+    /**
+     * returns a visual representation of the current value that statistics bar represents using the characters declared
+     * when the object was created, the 
+     *
+     * @return the string representation of the visual bar
+     */
     private String getBar() {
         String bar = "";
         if(barValueChar != Character.MIN_VALUE) {
