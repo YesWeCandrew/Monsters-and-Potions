@@ -46,6 +46,7 @@ public class Main {
 
         // Creating the new interface
         display = new Interface(map);
+        map.heroEscaped = null;
 
         display.displayUI();
         System.out.println();

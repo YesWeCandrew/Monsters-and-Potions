@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Menu {
     private static final String DEFAULT_CSV = "dummySave";
-    private static final String DEFAULT_JSON = "newJsonFile";
+    private static final String DEFAULT_JSON = "56-anotherSave";
 
     public static final String TITLE_1 =
         """
