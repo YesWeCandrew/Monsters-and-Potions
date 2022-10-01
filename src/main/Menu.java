@@ -158,20 +158,16 @@ public class Menu {
     public static Map displayOptionsAndChooseMap() {
         System.out.println(CHOOSE_INSTRUCTIONS);
 
-        Scanner in = new Scanner(System.in);
-        String s = in.nextLine();
+        String s = Main.scanner.nextLine();
 
         if (s == null) {return tryOptionsAgain("Invalid input, try again");}
         else if (s.length() == 0) {return tryOptionsAgain("Invalid input, try again");}
         else {
                 switch (s.charAt(0)) {
-                    case 'V', 'v' -> {return displayInstructions();}
-                    case 'P', 'p' -> {
-                        in.close();
-                        return new Map(DEFAULT_CSV, DEFAULT_JSON);
-                                    }
-                    case 'L', 'l' -> {return loadGame();}
-                    case 'Q', 'q' -> {return null;}
+                    case 'V', 'v' -> { return displayInstructions(); }
+                    case 'P', 'p' -> { return new Map(DEFAULT_CSV, DEFAULT_JSON); }
+                    case 'L', 'l' -> { return loadGame(); }
+                    case 'Q', 'q' -> { return null; }
                     default -> {
                         return tryOptionsAgain("Invalid input, try again");
                     }

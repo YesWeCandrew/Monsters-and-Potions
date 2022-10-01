@@ -31,6 +31,10 @@ public class Map {
         this.heroFacing = heroFacing;
     }
 
+    public Cardinality getHeroFacing() {
+        return this.heroFacing;
+    }
+
     /**
     The map which is an array of arrays of GameObjects.
     X = column
@@ -65,12 +69,12 @@ public class Map {
         map [0][1] = item;
         hero.pickUpItem(item2);
         //loadEntitiesFromJSON("99-test-2022-09-26");
-        heroEscaped = false;
+        //heroEscaped = false;
         heroFacing = Cardinality.WEST;
         heroPositionReference = new Position(0,0);
-        save(56,"anotherSave");
+        //save(56,"anotherSave");
         loadMapFromCSV("54-anotherSave");
-        loadEntitiesFromJSON("54-anotherSave");
+        //loadEntitiesFromJSON("54-anotherSave");
 
     }
 
@@ -79,7 +83,7 @@ public class Map {
     // If player dies this heroEscaped set to false.
     // If players wins by picking up the Amulet then it is set to true.
     // We can then display a winning or loosing screen.
-    public static Boolean heroEscaped;
+    public Boolean heroEscaped;
 
 
     /**
@@ -104,7 +108,6 @@ public class Map {
         loadMapFromCSV(pathToCSV);
     }
 
-
     private static void loadXANDYSize(String pathToCSV) {
         obtainXSize(pathToCSV);
         obtainYSize(pathToCSV);
@@ -125,40 +128,37 @@ public class Map {
         this.Y_SIZE = getHeight();
     }
 
-
-
-
-
-
     private static GameObject[][] initialiseBoard(int sizeX, int sizeY){
         return new GameObject[sizeX][sizeY];
     }
-
 
     /**
      * Saves the current game state to file.
      * This process saves a csv file to store the map
      * with a json file to store the entities.
+     *
      * @param id the primary key of the file.
      * @param saveFileName the name of the save file.
-     * @ return true if successful.
+     *
+     * @return true if successful.
      */
-    public static boolean save(int id,String saveFileName){
+    public boolean save(int id, String saveFileName){
         //Validate ID and saveFileName inputs
-        if (id < 0){
+        if (id < 0) {
             throw new RuntimeException("ID must be a positive integer.");
         }
+
         if (saveFileName == null || saveFileName.length() == 0 || saveFileName.isBlank()) {
             throw new RuntimeException("saveFileName cannot be blank.");
         }
 
-
         //Construct the save file name.
         String splitBy = "-";
         String fileNameDescriptor = id + splitBy + saveFileName;
-        if(map == null){
+        if (map == null) {
             throw new RuntimeException("Board is empty.");
         }
+
         //Save the map.
         saveMapCSV(fileNameDescriptor);
         //Save the entities.
@@ -170,6 +170,7 @@ public class Map {
     /**
      * Constructs a blank game objectMap with walls based on the wall
      * layout of the given map csv file.
+     *
      * @param pathToCSV the path to the map csv file.
      */
     private static void loadMapFromCSV(String pathToCSV) {
@@ -177,7 +178,7 @@ public class Map {
         //Declare restricted size of the map
         // TODO: 2021-09-28  make this dynamic
         obtainYSize(pathToCSV);
-        GameObject[][] returnMap = initialiseBoard(X_SIZE,Y_SIZE);
+        GameObject[][] returnMap = initialiseBoard(Y_SIZE,X_SIZE);
 
         //Initialise parameters for csv file
         String line;
@@ -194,12 +195,12 @@ public class Map {
                 String[] gameRow = line.split(splitBy);
 
                 //Convert to game objects and place into the map.
-                for (int i = 0; i < gameRow.length && i < Y_SIZE; i++) {
+                for (int col = 0; col < gameRow.length && col < Y_SIZE; col++) {
 
-                    if (gameRow[i].equals(WALL_CHARACTER)){
-                        returnMap[i][row] = new Wall();
+                    if (gameRow[col].equals(WALL_CHARACTER)){
+                        returnMap[row][col] = new Wall();
                     } else{
-                        returnMap[i][row] = null;
+                        returnMap[row][col] = null;
                     }
 
                 }
@@ -250,7 +251,6 @@ public class Map {
         return size;
     }
 
-
     /**
      * Saves the current map as a CSV to local storage.
      *
@@ -265,7 +265,7 @@ public class Map {
             //Construct the CSV row.
             String[] row = new String[X_SIZE];
             for (int j = 0; j < X_SIZE; j++) {
-                if ((map[j][i] != null) && (map[j][i] instanceof Wall)) {
+                if ((map[i][j] != null) && (map[i][j] instanceof Wall)) {
                     row[j] = WALL_CHARACTER;
                 } else {
                     row[j] = VACANT_CHARACTER;
@@ -294,8 +294,7 @@ public class Map {
         }
     }
 
-    private static void loadEntitiesFromJSON(String pathToJSON) {
-
+    private void loadEntitiesFromJSON(String pathToJSON) {
         //Initialise parser for JSON files.
         JSONParser jsonParser = new JSONParser();
 
@@ -319,7 +318,7 @@ public class Map {
         }
     }
 
-    private static void parseGameObject(JSONObject jsonObject) {
+    private void parseGameObject(JSONObject jsonObject) {
         String type = jsonObject.toJSONString().substring(2,9);
         String resultStr = "";
         //Collect Object type.
@@ -374,13 +373,13 @@ public class Map {
                 position = heroObject.get("position").toString();
                 x = Integer.parseInt(position.charAt(0) + "");
                 y = Integer.parseInt(position.charAt(position.length() - 1) + "");
-                map[x][y] = hero;
+                map[y][x] = hero;
 
                 String cardinality = heroObject.get("cardinality").toString();
                 System.out.println(cardinality);
                 heroFacing= Cardinality.valueOf(cardinality);
 
-                String escaped = heroObject.get("escaped").toString();
+                String escaped = heroObject.get("escaped") == null ? null : heroObject.get("escaped").toString();
                 heroEscaped = Boolean.parseBoolean(escaped);
 
                 heroPositionReference = new Position(x,y);
@@ -441,14 +440,15 @@ public class Map {
     }
 
     /**
-     Collects the attributes and positions for each GameObject
-     on the map, transforms and saves a new JSON file to local storage,
-     named with the given fileName.
-     @author Ethan Teber-Rossi
-     @author ..........
-     @param fileName the name of the new JSON file.
+     * Collects the attributes and positions for each GameObject
+     * on the map, transforms and saves a new JSON file to local storage,
+     * named with the given fileName.
+     *
+     * @author Ethan Teber-Rossi
+     *
+     * @param fileName the name of the new JSON file.
      */
-     private static void saveEntitiesToJSON(String fileName){
+     private void saveEntitiesToJSON(String fileName){
         //Collect items, monsters, hero on board put them into array list.
         Hero hero = null;
         Position heroPosition = null;
@@ -468,7 +468,7 @@ public class Map {
                 //CASE: Hero
                 if (map[j][i] instanceof Hero) {
                  hero = (Hero) map[j][i];
-                 heroPosition = new Position(j,i);
+                 heroPosition = new Position(i, j);
                 }
                 //CASE: Monster
                 else if (map[j][i] instanceof Monster) {
@@ -485,7 +485,6 @@ public class Map {
             }
         }
 
-
         //Construct array of all the objects for the JSON file.
         JSONArray jsonElements = new JSONArray();
 
@@ -493,7 +492,7 @@ public class Map {
         if(hero == null){
             throw new RuntimeException("Writing JSON file failed: no hero found on board.");
         } else{
-            jsonElements.add(createJSONHero(hero,heroPosition));
+            jsonElements.add(createJSONHero(hero, heroPosition));
         }
         //Create monster json objects;
         for (int i = 0; i < monsters.size(); i++) {
@@ -501,17 +500,19 @@ public class Map {
         }
         //Create items json objects.
         for (int i = 0; i < itemsOnBoard.size(); i++) {
-            JSONObject itemObject = createJSONItem(itemsOnBoard.get(i),itemPositions.get(i));
+            JSONObject itemObject = createJSONItem(itemsOnBoard.get(i), itemPositions.get(i));
             jsonElements.add(itemObject);
         }
 
         //Write to file.
-         writeJSONtoStorage(jsonElements,fileName);
+        writeJSONtoStorage(jsonElements, fileName);
     }
 
     /**
-     *Writes the JSONArray to the save folder.
+     * Writes the JSONArray to the save folder.
+     *
      * @author Ethan Teber-Rossi
+     *
      * @param json The JSONArray object
      * @param fileName the intended name for the new JSON file.
      */
@@ -525,39 +526,43 @@ public class Map {
     }
 
     /**
-     Constructs a JSON Object from a Hero Object,
-     including its attributes and its position on the board.
-     @author Ethan Teber-Rossi
-     @author ..........
+     * Constructs a JSON Object from a Hero Object,
+     * including its attributes and its position on the board.
+     *
+     * @author Ethan Teber-Rossi
      *
      * @param hero the hero object on the board.
      * @param position the position of the hero object on the board.
+     *
      * @return The JSON Encoding of the hero object.
      */
-    private static JSONObject createJSONHero(Hero hero, Position position){
+    private JSONObject createJSONHero(Hero hero, Position position){
         //Place the hero attributes & its position into a JSON Object.
         JSONObject heroAttributes = new JSONObject();
-        heroAttributes.put("position",position.getX() + ", "+ position.getY());
-        heroAttributes.put("charRepresentation",String.valueOf(hero.getChar()));
-        heroAttributes.put("name",hero.getName());
-        heroAttributes.put("healthPoints",hero.getHealthPoints());
-        heroAttributes.put("attackPoints",hero.getAttackPoints());
-        heroAttributes.put("phrases",hero.getPhrases());
-        heroAttributes.put("description",hero.getDescription());
+        heroAttributes.put("position", position.getX() + ", "+ position.getY());
+        heroAttributes.put("charRepresentation", String.valueOf(hero.getChar()));
+        heroAttributes.put("name", hero.getName());
+        heroAttributes.put("healthPoints", hero.getHealthPoints());
+        heroAttributes.put("attackPoints", hero.getAttackPoints());
+        heroAttributes.put("phrases", hero.getPhrases());
+        heroAttributes.put("description", hero.getDescription());
 
-        heroAttributes.put("cardinality",heroFacing.toString());
-        heroAttributes.put("escaped",heroEscaped.toString());
+        heroAttributes.put("cardinality", heroFacing.toString());
+        if (heroEscaped == null)
+            heroAttributes.put("escaped", null);
+        else
+            heroAttributes.put("escaped", heroEscaped.toString());
         //Items
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
         // use a for loop to add each item to the array list, note that itemSize is always set as 4 in the Hero class.
         for (int i = 0; i < hero.getItemsSize(); i++) {
-            heroAttributes.put("item"+i,createJSONItemForHero(hero.getItem(i)));
+            heroAttributes.put("item"+i, createJSONItemForHero(hero.getItem(i)));
         }
         //Construct the nested hero JSON Object.
         JSONObject jsonHero = new JSONObject();
         String heroPlaceHolder = "hero";
-        jsonHero.put(heroPlaceHolder,heroAttributes);
+        jsonHero.put(heroPlaceHolder, heroAttributes);
         return jsonHero;
     }
 
@@ -566,6 +571,7 @@ public class Map {
      *
      * @param monster
      * @param position
+     *
      * @return
      */
     private static JSONObject createJSONMonster(Monster monster, Position position){
@@ -579,7 +585,8 @@ public class Map {
         monsterDetails.put("phrases",monster.getPhrases());
         monsterDetails.put("description",monster.getDescription());
         // jsonObject.put("items",monster.getItems());
-        monsterDetails.put("itemToDrop",monster.getItemToDrop());
+        Item itemDrop = monster.getItemToDrop();
+        monsterDetails.put("itemToDrop", createJSONItem(itemDrop, null));
         //Construct the nested monster JSON Object.
         JSONObject jsonMonster = new JSONObject();
         String monsterPlaceHolder = "monster";
@@ -590,7 +597,8 @@ public class Map {
 
     private static JSONObject createJSONItem(Item item, Position position){
         JSONObject itemAttributes = new JSONObject();
-        itemAttributes.put("position",position.getX() + ", "+ position.getY());
+        if (position != null)
+            itemAttributes.put("position",position.getX() + ", "+ position.getY());
         itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
         itemAttributes.put("name",item.getName());
         itemAttributes.put("description",item.getDescription());
@@ -604,6 +612,7 @@ public class Map {
 
         return jsonItem;
     }
+
     public static JSONObject createJSONItemForHero(Item item){
         JSONObject itemAttributes = new JSONObject();
         itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
@@ -611,6 +620,7 @@ public class Map {
         itemAttributes.put("description",item.getDescription());
         itemAttributes.put("actionEffects",item.getActionEffect().toString());
         itemAttributes.put("actionChange",item.getActionChange());
+
         //Construct the nested item JSON Object.
         JSONObject jsonItem = new JSONObject();
         String itemPlaceHolder = "item";
@@ -618,23 +628,16 @@ public class Map {
         return jsonItem;
     }
 
-
-
-
-
-
-
-
-
-
     /**
      * deprecated
      *
      * Returns the GameState as a string ready to display in terminal
+     *
      * @param x the x coordinate of the middle cell to be displayed
      * @param y the y coordinate of the middle cell to be displayed
      * @param size the number of rows and columns to display around x,y
      *             (will always be square, but we could change this)
+     *
      * @return a string representation of the current GameState
      */
     public String displayArea(int x, int y, int size) {
@@ -680,12 +683,15 @@ public class Map {
 
     /**
      * Returns the src.objects.GameObject in the map at the provided position
+     *
      * @param position the position to return the object of
+     *
      * @throws ArrayIndexOutOfBoundsException if the position is out of bounds.
+     *
      * @return the src.objects.GameObject at the given position
      */
     public GameObject getObjectAt(Position position) throws ArrayIndexOutOfBoundsException {
-        return map[position.getX()][position.getY()];
+        return map[position.getY()][position.getX()];
     }
 
     private Position positionInFrontOfHero() {
@@ -700,14 +706,16 @@ public class Map {
      * - There is already an object at the given position
      * To replace an object, first use the clearPosition function, then
      * call this function.
+     *
      * @param position the position to place the object
      * @param object the object to place
+     *
      * @return true if successfully placed, otherwise false
      */
     public boolean setObjectAt(Position position, GameObject object) {
         boolean set = false;
         if (isEmpty(position)) {
-            map[position.getX()][position.getY()] = object;
+            map[position.getY()][position.getX()] = object;
             set = true;
         }
 
@@ -728,7 +736,6 @@ public class Map {
 //            return false;
 //        }
 
-
     /**
      * Sets the given position to null.
      * Note that this does so *safely*.
@@ -737,9 +744,8 @@ public class Map {
      * @param position the position to set to null.
      */
     public void clearPosition(Position position) {
-
         try {
-            map[position.getX()][position.getY()] = null;
+            map[position.getY()][position.getX()] = null;
         } catch (Exception ignored) {
         }
     }
@@ -747,11 +753,13 @@ public class Map {
     /**
      * Returns whether the position given is on the board
      *
-     * @param position the position to check
-     * @return whether the position is on the board
      * @author Andrew Howes
+     *
+     * @param position the position to check
+     *
+     * @return whether the position is on the board
      */
-    public boolean isOnBoard(Position position) {
+    private boolean isOnBoard(Position position) {
         return (position.getX() < X_SIZE &&
                 position.getX() >= 0 &&
                 position.getY() >= 0);
@@ -762,22 +770,28 @@ public class Map {
      * NOTE: this function will return false if the position is off the board.
      * Use isEmpty to check if there is NO object and the cell exists.
      *
-     * @param position the position to check
-     * @return true if an object exists, otherwise false
      * @author Andrew Howes
+     *
+     * @param position the position to check
+     *
+     * @return true if an object exists, otherwise false
      */
-    public boolean hasObject(Position position) {
-        if (!isOnBoard(position)) return false;
-        else return getObjectAt(position) != null;
+    private boolean hasObject(Position position) {
+        if (!isOnBoard(position))
+            return false;
+        else
+            return getObjectAt(position) != null;
     }
 
     /**
      * Checks first that the position is on the board and has no objects.
-     * If it is off the board, the function returns false;
+     * If it is off the board, the function returns false
+     *
+     * @author Andrew Howes
      *
      * @param position the position to check for emptiness
+     *
      * @return whether the position is on the board and empty
-     * @author Andrew Howes
      */
     public boolean isEmpty(Position position) {
         return !hasObject(position);
@@ -787,17 +801,17 @@ public class Map {
      * Moves the hero in the cardinality/direction they are facing.
      * If hero is facing any other objects or the edge of the board,
      * the hero will not move and the function will return False.
+     *
      * @return true if the hero was successfully moved forwards, else returns
      * false
      */
     public boolean moveHero() {
-
         // If the position is empty (it exists, and it does not already have
         // an object)
         Position inFront = positionInFrontOfHero();
         if (isEmpty(inFront) && isOnBoard(inFront)) {
             // Copy the hero to that point in the array
-            setObjectAt(positionInFrontOfHero(),getObjectAt(heroPositionReference));
+            setObjectAt(positionInFrontOfHero(), getObjectAt(heroPositionReference));
 
             // Remove the hero from its original position
             clearPosition(heroPositionReference);
@@ -807,15 +821,14 @@ public class Map {
 
             return true;
         } else {
-
             return false;
         }
-
     }
 
     /**
-     * Turns the hero to face west and tries to move forwards.
+     * Turns the hero to face west and tries to move left.
      * Will ALWAYS turn the hero. Will also moveHero if west square is empty
+     *
      * @return whether the hero successfully moved left after turning to face west
      */
     public boolean goLeft() {
@@ -824,8 +837,9 @@ public class Map {
     }
 
     /**
-     * Turns the hero to face north and tries to move forwards.
+     * Turns the hero to face north and tries to move upwards.
      * Will ALWAYS turn the hero. Will also moveHero if north square is empty
+     *
      * @return whether the hero successfully moved up after turning to face north
      */
     public boolean goUp() {
@@ -834,9 +848,10 @@ public class Map {
     }
 
     /**
-     * Turns the hero to face east and tries to move forwards.
+     * Turns the hero to face east and tries to move right.
      * Will ALWAYS turn the hero. Will also moveHero if east square is empty
-     * @return whether the hero successfully moved up after turning to face east
+     *
+     * @return whether the hero successfully moved right after turning to face east
      */
     public boolean goRight() {
         heroFacing = Cardinality.EAST;
@@ -844,9 +859,10 @@ public class Map {
     }
 
     /**
-     * Turns the hero to face south and tries to move forwards.
+     * Turns the hero to face south and tries to move downwards.
      * Will ALWAYS turn the hero. Will also moveHero if south square is empty
-     * @return whether the hero successfully moved up after turning to face south
+     *
+     * @return whether the hero successfully moved down after turning to face south
      */
     public boolean goDown() {
         heroFacing = Cardinality.SOUTH;
@@ -868,8 +884,9 @@ public class Map {
      * Picks up the item directly in front of the player in the direction they
      * are facing
      *
-     * @return true if the object is successfully picked up, otherwise false
      * @author Andrew Howes
+     *
+     * @return true if the object is successfully picked up, otherwise false
      */
     public boolean pickUpItem() {
         try {
@@ -877,14 +894,15 @@ public class Map {
             boolean success = getHero().pickUpItem(item);
             checkHeroDead(); // Items can kill a Hero.
 
-            // If you've picked up the item and it's the Amulet, you have won!
-            if (success &&
-                    item.getName().equals("Amulet")) {
+            // If you've picked up the item, and it's the Amulet, you have won!
+            if (success && item.getName().equals("Amulet")) {
                 heroEscaped = true;
             }
 
             // Remove the item from the map
-            if (success) {clearPosition(positionInFrontOfHero());}
+            if (success) {
+                clearPosition(positionInFrontOfHero());
+            }
 
             // regardless of whether you've won or died or just still going
             // returns success because you picked up an item!
@@ -898,7 +916,7 @@ public class Map {
      * Checks whether the health points of the hero have fallen to <= 0.
      * If they have set heroEscaped to false, which should flag game to end.
      *
-     * @Author Andrew Howes
+     * @author Andrew Howes
      */
     public void checkHeroDead() {
         if (getHero().getHealthPoints() <= 0) {
@@ -913,11 +931,13 @@ public class Map {
      * Returns true if successfully discarded. Will return false if:
      * - There is no object at that index in the array, or
      * - There is no position in front of the hero (is the edge of the map), or
-     * - There is an object already in that place,
+     * - There is an object already in that place
+     *
+     * @author Andrew Howes
      *
      * @param n the number of the item to discard (starting at 0)
+     *
      * @return whether the item could be discarded
-     * @author Andrew Howes
      */
     public boolean discardItem(int n) {
         if (isEmpty(positionInFrontOfHero())) {
@@ -980,8 +1000,9 @@ public class Map {
      * Produces all possible moves that the player can take, given their position
      * on the board
      *
-     * @return an arrayList of strings describing possible moves
      * @author Andrew Howes
+     *
+     * @return an arrayList of strings describing possible moves
      */
     public ArrayList<String> allPossibleActions() {
         ArrayList<String> allPossibleActions = new ArrayList<>();
@@ -1077,16 +1098,18 @@ public class Map {
     /**
      * Iterates over each row and column to generate a string representation
      * of the map
-     * @return the map as a string.
+     *
      * @author Andrew Howes
+     *
+     * @return the map as a string.
      */
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         for (int y = 0; y < Y_SIZE; y ++) {
             for (int x = 0; x < X_SIZE; x++) {
-                if (map[x][y] == null) {stringBuilder.append(" ");}
-                else {stringBuilder.append(map[x][y].getChar());}
+                if (map[y][x] == null) {stringBuilder.append(" ");}
+                else {stringBuilder.append(map[y][x].getChar());}
             }
             if (y < Y_SIZE-1) {stringBuilder.append("\n");}
         }
@@ -1097,7 +1120,9 @@ public class Map {
     /**
      * Compares two maps. However, as map is static, it cannot be compared.
      * Really only assess heroPositionReference, heroFacing and heroEscaped.
+     *
      * @param o the object to compare
+     *
      * @return whether heroPositionReference, heroFacing and heroEscaped are the same.
      */
     @Override

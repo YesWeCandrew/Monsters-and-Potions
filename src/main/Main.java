@@ -2,9 +2,6 @@ package main;
 
 import map.Map;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.DataInputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -12,6 +9,8 @@ public class Main {
 
     static Interface display;
     public static ArrayList<KeyListener> listeners = new ArrayList<>();
+
+    public static Scanner scanner = new Scanner(System.in);
 
     public interface KeyListener {
 
@@ -21,7 +20,7 @@ public class Main {
          * @param c the key that was input
          * @return true if the key resulted in an action, false if it is ignored
          */
-        public boolean action(char c);
+        boolean action(char c);
     }
 
     /**
@@ -116,7 +115,6 @@ public class Main {
 //    }
 
     public static boolean getKeyEvent() {
-        Scanner scanner = new Scanner(System.in);
         String s = scanner.next();
         boolean render = false;
 
@@ -125,7 +123,7 @@ public class Main {
                 char c = s.charAt(0);
                 for (KeyListener listener : listeners) {
                     boolean used = listener.action(c);
-                    render = render ? true : used;
+                    render = render || used;
                 }
             }
         }
