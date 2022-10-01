@@ -380,10 +380,10 @@ public class Map {
                 System.out.println(cardinality);
                 heroFacing= Cardinality.valueOf(cardinality);
 
-                Object escaped = heroObject.get("escaped");
-                heroEscaped = Boolean.parseBoolean((String) escaped);
+                String escaped = heroObject.get("escaped").toString();
+                heroEscaped = Boolean.parseBoolean(escaped);
 
-                heroPositionReference = new Position(Integer.parseInt(heroObject.get("positionFacingX").toString()),Integer.parseInt(heroObject.get("positionFacingY").toString()));
+                heroPositionReference = new Position(x,y);
             }
             case "monster" -> {
                 JSONObject monsterObject = (JSONObject) jsonObject.get(resultStr);
@@ -546,9 +546,7 @@ public class Map {
         heroAttributes.put("description",hero.getDescription());
 
         heroAttributes.put("cardinality",heroFacing.toString());
-        heroAttributes.put("escaped",heroEscaped);
-        heroAttributes.put("positionFacingX",getHeroPositionReference().getX());
-        heroAttributes.put("positionFacingY",getHeroPositionReference().getY());
+        heroAttributes.put("escaped",heroEscaped.toString());
         //Items
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero

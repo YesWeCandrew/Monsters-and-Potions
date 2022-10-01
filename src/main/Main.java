@@ -2,10 +2,27 @@ package main;
 
 import map.Map;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.io.DataInputStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 public class Main {
 
     static Interface display;
     public static ArrayList<KeyListener> listeners = new ArrayList<>();
+
+    public interface KeyListener {
+
+        /**
+         * completes some action given the key
+         *
+         * @param c the key that was input
+         * @return true if the key resulted in an action, false if it is ignored
+         */
+        public boolean action(char c);
+    }
 
     /**
      * Runs a title sequence, lets the user view instructions or load a game
@@ -29,11 +46,20 @@ public class Main {
 
         // Creating the new interface
         display = new Interface(map);
+        map.heroEscaped = null;
 
-        // Not sure if we want the loop  here, but this is just a basic way we
-        // can have the game check if the player won or lost
+        display.displayUI();
+        System.out.println();
+        System.out.print("command input: ");
         while (map.heroEscaped == null) {
-            display.displayUI();
+            if(getKeyEvent()) {
+                for(int i = 0; i < 10; i++)
+                    System.out.println(); // visual spacing between frames
+
+                display.displayUI();
+                System.out.println();
+            }
+            System.out.print("command input: ");
         }
 
         // Only set to true if the Amulet is picked up
@@ -47,7 +73,63 @@ public class Main {
                     "I'm afraid you have died. Better luck next time..."
             );
         }
+    }
 
+//    /**
+//     * example of keyboard input implementation
+//     *
+//     * @param args
+//     */
+//    public static void main(String... args) {
+//        listeners.add(c -> {
+//            switch(c) {
+//                case 'w':
+//                    System.out.println("moved up");
+//                    return true;
+//                case 's':
+//                    System.out.println("moved down");
+//                    return true;
+//                case 'a':
+//                    System.out.println("moved left");
+//                    return true;
+//                case 'd':
+//                    System.out.println("moved right");
+//                    return true;
+//                default:
+//                    return false;
+//            }
+//        });
+//
+//        System.out.println("display map");
+//        System.out.println();
+//        System.out.print("command input: ");
+//
+//        while(true) {
+//            if(getKeyEvent()) {
+//                for(int i = 0; i < 10; i++) System.out.println();
+//
+//                System.out.println("display map");
+//                System.out.println();
+//            }
+//            System.out.print("command input: ");
+//        }
+//    }
 
+    public static boolean getKeyEvent() {
+        Scanner scanner = new Scanner(System.in);
+        String s = scanner.next();
+        boolean render = false;
+
+        if(s != null) {
+            if(s.length() > 0) {
+                char c = s.charAt(0);
+                for (KeyListener listener : listeners) {
+                    boolean used = listener.action(c);
+                    render = render ? true : used;
+                }
+            }
+        }
+
+        return render;
     }
 }
