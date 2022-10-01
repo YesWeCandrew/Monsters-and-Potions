@@ -28,6 +28,7 @@ public class Main {
 
         // Creating the new interface
         display = new Interface(map);
+        map.heroEscaped = null;
 
         // Not sure if we want the loop  here, but this is just a basic way we
         // can have the game check if the player won or lost

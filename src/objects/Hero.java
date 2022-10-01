@@ -89,6 +89,9 @@ public class Hero extends LivingGameObject{
     }
 
     public int getItemsSize() {
+        if (this.items == null){
+            return 0;
+        }
         return this.items.size();
     }
 
