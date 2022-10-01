@@ -13,10 +13,7 @@ public abstract class LivingGameObject extends GameObject {
         this.description = description;
     }
 
-// ATTRIBUTES
-
         private String name; // the name of the object
-
         private int healthPoints; // the number of health points
         private int attackPoints; // the number of attack points
 
@@ -30,7 +27,6 @@ public abstract class LivingGameObject extends GameObject {
 
 
     // GETTERS AND SETTERS
-
 
         public void setName(String name) {
             this.name = name;
@@ -72,16 +68,12 @@ public abstract class LivingGameObject extends GameObject {
             return description;
         }
 
-
-    // GENERAL METHODS
-
-        // TODO: Implement these methods
-
     /**
      * Reduces the health points of the object by the integer x.
      * @param x the amount to reduce the objects health by
      * @return true if health was reduced and object still alive, false if
      * the hit caused the object to die (healthPoints <=0)
+     * @author Andrew Howes
      */
     public boolean reduceHealth(int x) {
         // throw an exception if x is negative
@@ -101,6 +93,7 @@ public abstract class LivingGameObject extends GameObject {
     /**
     Increases the health points of the object by the integer x.
      @param x the amount to increase the objects health by
+     @author Andrew Howes
      */
     public void increaseHealth(int x) {
         // throw an exception if x is negative
@@ -116,6 +109,7 @@ public abstract class LivingGameObject extends GameObject {
      Changes the health points of the object by the positive or negative
      integer x.
      @param x the amount to change the objects health by
+     @author Andrew Howes
      */
     public void changeHealth(int x) {
             healthPoints += x;
@@ -125,6 +119,7 @@ public abstract class LivingGameObject extends GameObject {
     Changes the attack points of the object by the positive or negative
      integer x.
      @param x the amount to change the objects attackPoints by
+     @author Andrew Howes
      */
     public void changeAttack(int x) {
             attackPoints += x;

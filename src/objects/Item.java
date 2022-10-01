@@ -1,6 +1,8 @@
 package objects;
 
+import map.Position;
 import objects.GameObject;
+import org.json.simple.JSONObject;
 
 public class Item extends GameObject {
 
@@ -18,7 +20,6 @@ public class Item extends GameObject {
      */
     private final int actionChange;
 
-
     /**
      *
      * @param charRepresentation the character to represent the item
@@ -26,6 +27,7 @@ public class Item extends GameObject {
      * @param description the items description
      * @param actionEffects either "health" or "attack" anything else will throw error
      * @param actionChange the amount to change health or attack by (can be negative)
+     * @author Andrew Howes
      */
     public Item(char charRepresentation, String name, String description, String actionEffects, int actionChange) {
         super(charRepresentation);
@@ -46,7 +48,9 @@ public class Item extends GameObject {
         health,
         attack
     }
-
+    public String getCharRepresentation() {
+        return String.valueOf(getChar());
+    }
     public String getName() {
         return name;
     }
@@ -58,13 +62,15 @@ public class Item extends GameObject {
     public int getActionChange() {return actionChange;}
 
     public actionEffect getActionEffect() {return actionEffects;}
-
+    public String getActionEffectString() {return actionEffects.toString();}
+    public String getActionChangeString() {return Integer.toString(actionChange);}
     /**
      * Helper function for Map.allPossibleActions()
      * Given an item and whether the player is facing it, it returns information
      * about the item
      * @param isFacing is the player facing the item
      * @return a relevant action for the item
+     * @author
      */
     @Override
     public String actionOptions(boolean isFacing) {
