@@ -19,8 +19,8 @@ public class Map {
      clear that it is just a reference to the cell in the map that holds the
      Hero object
      */
-    private Position heroPositionReference;
-    private Cardinality heroFacing;
+    private static Position heroPositionReference;
+    private static Cardinality heroFacing;
 
     public void setHeroPositionReference(Position heroPositionReference) {
         this.heroPositionReference = heroPositionReference;
@@ -64,7 +64,10 @@ public class Map {
         map [0][1] = item;
         hero.pickUpItem(item2);
         //loadEntitiesFromJSON("99-test-2022-09-26");
-        save(54,"anotherSave");
+        heroEscaped = false;
+        heroFacing = Cardinality.WEST;
+        heroPositionReference = new Position(0,0);
+        save(56,"anotherSave");
         loadMapFromCSV("54-anotherSave");
         loadEntitiesFromJSON("54-anotherSave");
 
@@ -75,7 +78,7 @@ public class Map {
     // If player dies this heroEscaped set to false.
     // If players wins by picking up the Amulet then it is set to true.
     // We can then display a winning or loosing screen.
-    public Boolean heroEscaped;
+    public static Boolean heroEscaped;
 
 
     /**
@@ -370,6 +373,15 @@ public class Map {
                 x = Integer.parseInt(position.charAt(0) + "");
                 y = Integer.parseInt(position.charAt(position.length() - 1) + "");
                 map[x][y] = hero;
+
+                String cardinality = heroObject.get("cardinality").toString();
+                System.out.println(cardinality);
+                heroFacing= Cardinality.valueOf(cardinality);
+
+                Object escaped = heroObject.get("escaped");
+                heroEscaped = Boolean.parseBoolean((String) escaped);
+
+                heroPositionReference = new Position(Integer.parseInt(heroObject.get("positionFacingX").toString()),Integer.parseInt(heroObject.get("positionFacingY").toString()));
             }
             case "monster" -> {
                 JSONObject monsterObject = (JSONObject) jsonObject.get(resultStr);
@@ -530,6 +542,11 @@ public class Map {
         heroAttributes.put("attackPoints",hero.getAttackPoints());
         heroAttributes.put("phrases",hero.getPhrases());
         heroAttributes.put("description",hero.getDescription());
+
+        heroAttributes.put("cardinality",heroFacing.toString());
+        heroAttributes.put("escaped",heroEscaped);
+        heroAttributes.put("positionFacingX",getHeroPositionReference().getX());
+        heroAttributes.put("positionFacingY",getHeroPositionReference().getY());
         //Items
         // jsonObject.put("items",hero.getItems());
         // TODO 29/09/2022 add items to hero
@@ -657,7 +674,7 @@ public class Map {
         return map[0].length;
     }
 
-    public Position getHeroPositionReference() {
+    public static Position getHeroPositionReference() {
         return heroPositionReference;
     }
 
