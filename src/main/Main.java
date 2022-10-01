@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
 
     static Interface display;
-    static ArrayList<KeyListener> listeners = new ArrayList<>();
+    public static ArrayList<KeyListener> listeners = new ArrayList<>();
 
     public interface KeyListener {
 

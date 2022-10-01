@@ -1,6 +1,7 @@
 package map;
 
 import com.opencsv.CSVWriter;
+import main.Main;
 import objects.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -89,8 +90,7 @@ public class Map {
      * @param pathToJSON the path to the JSON or XML or whatever file
      */
     public Map(String pathToCSV,String pathToJSON) {
-        loadXANDYSize(pathToCSV);
-        loadMapFromCSV(pathToCSV);
+        this(pathToCSV);
         loadEntitiesFromJSON(pathToJSON);
     }
 
@@ -121,6 +121,8 @@ public class Map {
         map[heroPos.getX()][heroPos.getY()] = new Hero('H', "test-hero", 100, 100, null, "for testing purposes", new ArrayList<>());
         heroFacing = Cardinality.NORTH;
         this.map = map;
+        this.X_SIZE = getWidth();
+        this.Y_SIZE = getHeight();
     }
 
 
@@ -751,7 +753,6 @@ public class Map {
      */
     public boolean isOnBoard(Position position) {
         return (position.getX() < X_SIZE &&
-                position.getY() < Y_SIZE &&
                 position.getX() >= 0 &&
                 position.getY() >= 0);
     }
@@ -766,9 +767,8 @@ public class Map {
      * @author Andrew Howes
      */
     public boolean hasObject(Position position) {
-        if (!isOnBoard(position)) {
-            return false;
-        } else return getObjectAt(position) != null;
+        if (!isOnBoard(position)) return false;
+        else return getObjectAt(position) != null;
     }
 
     /**
@@ -780,7 +780,7 @@ public class Map {
      * @author Andrew Howes
      */
     public boolean isEmpty(Position position) {
-        return isOnBoard(position) & !hasObject(position);
+        return !hasObject(position);
     }
 
     /**
@@ -794,7 +794,8 @@ public class Map {
 
         // If the position is empty (it exists, and it does not already have
         // an object)
-        if (isEmpty(positionInFrontOfHero())) {
+        Position inFront = positionInFrontOfHero();
+        if (isEmpty(inFront) && isOnBoard(inFront)) {
             // Copy the hero to that point in the array
             setObjectAt(positionInFrontOfHero(),getObjectAt(heroPositionReference));
 
@@ -998,6 +999,22 @@ public class Map {
             }
         }
 
+        Main.listeners.clear();
+        Main.listeners.add(c -> {
+            switch(Character.toLowerCase(c)) {
+                case 'w':
+                    return goUp();
+                case 's':
+                    return goDown();
+                case 'a':
+                    return goLeft();
+                case 'd':
+                    return goRight();
+                default:
+                    return false;
+            }
+        });
+
 //      Getting valid positions surrounding the hero (those on the board)
         ArrayList<PositionRef> validPositions = new ArrayList<>();
         Cardinality[] cards = {Cardinality.NORTH, Cardinality.EAST, Cardinality.SOUTH, Cardinality.WEST};
@@ -1022,7 +1039,7 @@ public class Map {
             // if there is something in the position, and the hero is facing it
             else if (posRef.isFacing) {
                 // Get the string of what you can do when facing that option
-                actionAtPosition = getObjectAt(posRef.position).actionOptions(true);
+                actionAtPosition = getObjectAt(posRef.position).actionOptions(getHero(), true);
 
                 // If there is action text add it
                 if (!Objects.equals(actionAtPosition, "")) {
@@ -1035,7 +1052,7 @@ public class Map {
                 // Returns the way the character needs to move to face the object
                 String directionToMove = Position.actions(posRef.fromHero, "Turn");
                 // Get the string of what you can do if you turned to face it
-                actionAtPosition = getObjectAt(posRef.position).actionOptions(false);
+                actionAtPosition = getObjectAt(posRef.position).actionOptions(getHero(), false);
                 // If there is action text add it
                 if (!Objects.equals(actionAtPosition, "")) {
                     allPossibleActions.add(directionToMove + actionAtPosition);

@@ -24,7 +24,7 @@ public abstract class GameObject {
      * @return a relevant action for the item by default returns ""
      * @author Andrew Howes
      */
-    public String actionOptions(boolean isFacing) {
+    public String actionOptions(Hero hero, boolean isFacing) {
         return "";
     }
 }

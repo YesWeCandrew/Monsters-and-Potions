@@ -8,6 +8,12 @@ public class TextList extends Element {
     Listener<String[]> listener;
     int size, maxSize, maxWidth;
 
+    /**
+     *
+     *
+     * @param maxSize
+     * @param maxWidth
+     */
     public TextList(int maxSize, int maxWidth) {
         super();
         this.maxWidth = maxWidth;
@@ -24,6 +30,13 @@ public class TextList extends Element {
         return addText(size, text);
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @param text
+     * @return
+     */
     public boolean addText(int index, String text) {
         boolean inserted = false;
         if(size < texts.length && inBounds(index)) {
@@ -41,6 +54,12 @@ public class TextList extends Element {
         return inserted;
     }
 
+    /**
+     *
+     *
+     * @param texts
+     * @return
+     */
     public boolean addAllText(ArrayList<String> texts) {
         boolean insertedAll = this.texts.length >= texts.size() + size;
         for(int i = size; i < Math.min(this.texts.length, texts.size() + size); i++) {
@@ -54,6 +73,12 @@ public class TextList extends Element {
         return insertedAll;
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @return
+     */
     public boolean removeText(int index) {
         boolean removed = false;
         if(inBounds(index)) {
@@ -72,10 +97,22 @@ public class TextList extends Element {
         size = 0;
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @return
+     */
     private boolean inBounds(int index) {
         return index >= 0 && index < texts.length;
     }
 
+    /**
+     *
+     *
+     * @param index
+     * @return
+     */
     public TextField getTextField(int index) {
         return index < texts.length && index >= 0 ? texts[index] : null;
     }
@@ -84,6 +121,7 @@ public class TextList extends Element {
     public String[] getStringRender() {
         if(listener != null) {
             String[] retrieved = listener.retrieve();
+            clearTexts();
             for (int i = 0; i < Math.min(retrieved.length, texts.length); i++) {
                 addText(i, retrieved[i]);
             }
@@ -99,8 +137,7 @@ public class TextList extends Element {
     }
 
     @Override
-    public void maximizeSize() {
-        setWidth(maxWidth);
-        setHeight(texts.length);
+    protected Bounds getMaximizedSize() {
+        return new Bounds(maxWidth, texts.length);
     }
 }
