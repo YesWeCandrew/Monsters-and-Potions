@@ -66,12 +66,13 @@ public class TextField extends Element {
         if(getWidth() != -1) {
             wrapped.set(index, wrapped.get(index) + (" ").repeat(getWidth() - length));
         }
+
         if(getHeight() != -1) {
             for (int i = index; index < getHeight(); index++) {
                 wrapped.add((" ").repeat(getWidth()));
             }
         }
 
-        return (String[])(wrapped.toArray(new String[wrapped.size()]));
+        return (String[]) (wrapped.toArray(new String[wrapped.size()]));
     }
 }

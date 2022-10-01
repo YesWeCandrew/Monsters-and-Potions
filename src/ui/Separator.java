@@ -16,12 +16,12 @@ public class Separator extends Element {
     @Override
     public String[] getStringRender() {
         String[] separator = null;
-        if(horizontal) {
-            separator = new String[]{String.valueOf(character).repeat(length)};
+        if (horizontal) {
+            separator = new String[]{ String.valueOf(character).repeat(length) };
         }
         else {
             separator = new String[length];
-            for(int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++)
                 separator[i] = String.valueOf(character);
         }
         return separator;
