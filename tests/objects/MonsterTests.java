@@ -22,7 +22,7 @@ public class MonsterTests {
 
     @Test
     @Timeout(value = 10, unit = TimeUnit.MILLISECONDS)
-    void speakTest() {
+    void Speak_ReturnAllPhrases() {
         ArrayList<String> returnedPhrases = new ArrayList<>();
 
         // Check that calling speak can return all possible phrases

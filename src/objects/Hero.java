@@ -22,13 +22,16 @@ public class Hero extends LivingGameObject{
      * added returns true and executes the action described by the object.
      *
      * If the object cannot be added (eg. inventory is  full) returns false
-     * @param item the item to add
-     * @return whether the object was successfully added
+     *
      * @author Andrew Howes
+     *
+     * @param item the item to add
+     *
+     * @return whether the object was successfully added
      */
     public boolean pickUpItem(Item item){
         // if items is null, create a new arraylist
-        if(items == null){
+        if (items == null) {
             items = new ArrayList<>();
             items.add(item);
             return true;
@@ -36,7 +39,7 @@ public class Hero extends LivingGameObject{
         else if (items.size() >= maxItemsSize) {
             return false;
         }
-        else{
+        else {
             // Adding the item to the inventory.
             items.add(item);
         }
@@ -55,9 +58,11 @@ public class Hero extends LivingGameObject{
      * Removes the item at the xth number of the inventory. Also undoes the
      * effects on health/armour
      *
-     * @param x the number in the array to remove (starting at 0)
-     * @return the item if it was removed successfully, or null otherwise
      * @author Andrew Howes
+     *
+     * @param x the number in the array to remove (starting at 0)
+     *
+     * @return the item if it was removed successfully, or null otherwise
      */
     public Item discardItem(int x) {
         Item item;

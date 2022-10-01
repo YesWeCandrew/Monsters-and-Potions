@@ -25,9 +25,12 @@ public class Monster extends LivingGameObject{
      * Helper function for Map.allPossibleActions()
      * Given an item and whether the player is facing it, it returns information
      * about the monster
-     * @param isFacing is the player facing the item
-     * @return a relevant action for the item
+     *
      * @author Andrew Howes
+     *
+     * @param isFacing is the player facing the item
+     *
+     * @return a relevant action for the item
      */
     @Override
     public String actionOptions(Hero hero, boolean isFacing) {
