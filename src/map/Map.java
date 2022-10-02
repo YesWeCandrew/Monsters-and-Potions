@@ -371,9 +371,9 @@ public class Map {
                 //items = heroObject.get("items") == null ? null : (ArrayList<Item>) heroObject.get("items");
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Hero hero = new Hero(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, items);
-                position = heroObject.get("position").toString();
-                x = Integer.parseInt(position.charAt(0) + "");
-                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+                //position = heroObject.get("position").toString();
+                x = Integer.parseInt(heroObject.get("positionX").toString());
+                y = Integer.parseInt(heroObject.get("positionY").toString());
                 map[y][x] = hero;
 
                 String cardinality = heroObject.get("cardinality").toString();
@@ -411,9 +411,8 @@ public class Map {
                 }
                 //ArrayList<Item> items = (ArrayList<Item>) heroObject.get("items");
                 Monster monster = new Monster(charRep.charAt(0), name, healthPoints, attackPoints, phrases, description, dropItem);
-                position = monsterObject.get("position").toString();
-                x = Integer.parseInt(position.charAt(0) + "");
-                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+                x = Integer.parseInt(monsterObject.get("positionX").toString());
+                y = Integer.parseInt(monsterObject.get("positionY").toString());
 
                 //Place monster into map
                 //setObjectAt();
@@ -431,9 +430,8 @@ public class Map {
                 String actionEffects = itemObject.get("actionEffects").toString();
                 int actionChange = Integer.parseInt(itemObject.get("actionChange").toString());
                 Item item = new Item(charRep.charAt(0), name, description, actionEffects, actionChange);
-                position = itemObject.get("position").toString();
-                x = Integer.parseInt(position.charAt(0) + "");
-                y = Integer.parseInt(position.charAt(position.length() - 1) + "");
+                x = Integer.parseInt(itemObject.get("positionX").toString());
+                y = Integer.parseInt(itemObject.get("positionY").toString());
                 map[x][y] = item;
             }
             default -> throw new RuntimeException("Invalid object type");
@@ -539,7 +537,8 @@ public class Map {
     private JSONObject createJSONHero(Hero hero, Position position){
         //Place the hero attributes & its position into a JSON Object.
         JSONObject heroAttributes = new JSONObject();
-        heroAttributes.put("position", position.getX() + ", "+ position.getY());
+        heroAttributes.put("positionX", position.getX());
+        heroAttributes.put("positionY", position.getY());
         heroAttributes.put("charRepresentation", String.valueOf(hero.getChar()));
         heroAttributes.put("name", hero.getName());
         heroAttributes.put("healthPoints", hero.getHealthPoints());
@@ -577,7 +576,8 @@ public class Map {
     private static JSONObject createJSONMonster(Monster monster, Position position){
         //Place the monster attributes & its position into a JSON Object.
         JSONObject monsterDetails = new JSONObject();
-        monsterDetails.put("position",position.getX() + ", "+ position.getY());
+        monsterDetails.put("positionX",position.getX());
+        monsterDetails.put("positionY",position.getX());
         monsterDetails.put("charRepresentation",String.valueOf(monster.getChar()));
         monsterDetails.put("name",monster.getName());
         monsterDetails.put("healthPoints",monster.getHealthPoints());
@@ -595,11 +595,13 @@ public class Map {
         return jsonMonster;
     }
 
+
     private static JSONObject createJSONItem(Item item, Position position) {
         JSONObject itemAttributes = new JSONObject();
 
         if (item == null) {
-            itemAttributes.put("position", null);
+            itemAttributes.put("positionX", null);
+            itemAttributes.put("positionY", null);
             itemAttributes.put("charRepresentation", null);
             itemAttributes.put("name", null);
             itemAttributes.put("description", null);
@@ -614,7 +616,8 @@ public class Map {
         }
 
         if (position != null)
-            itemAttributes.put("position", position.getX() + ", "+ position.getY());
+            itemAttributes.put("positionX", position.getX());
+        itemAttributes.put("positionY", position.getY());
         itemAttributes.put("charRepresentation", String.valueOf(item.getChar()));
         itemAttributes.put("name", item.getName());
         itemAttributes.put("description", item.getDescription());
