@@ -14,7 +14,8 @@
       "healthPoints": 50,
       "name": "The Hero",
       "description": "The hero is a hero.",
-      "position": "6, 8",
+      "positionX": 6,
+      "positionY": 8,
       "phrases": null,
       "charRepresentation": "H",
       "attackPoints": 10,
@@ -26,7 +27,8 @@
       "healthPoints": 45,
       "name": "Demonspawn",
       "description": "Will hurt you! Better be prepared.",
-      "position": "5, 1",
+      "positionX": 5,
+      "positionY": 1,
       "phrases": null,
       "charRepresentation": "^",
       "attackPoints": 10,
@@ -46,7 +48,8 @@
       "healthPoints": 100,
       "name": "Big Greg",
       "description": "Just a sloth. Harmless, but be afraid.",
-      "position": "14, 15",
+      "positionX": 14,
+      "positionY": 15,
       "phrases": null,
       "charRepresentation": "^",
       "attackPoints": 5,
@@ -56,7 +59,28 @@
           "actionChange": 1,
           "name": "Desperateness",
           "description": "Use when desperate!",
-          "charRepresentation": "I"
+          "charRepresentation": "G"
+        }
+      }
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 1000,
+      "name": "Thomas",
+      "description": "A Thomas. Unbeatable.",
+      "positionX": 21,
+      "positionY": 21,
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 1000,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 1,
+          "name": "Desperateness",
+          "description": "Use when desperate!",
+          "charRepresentation": "T"
         }
       }
     }
