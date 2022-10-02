@@ -1045,13 +1045,17 @@ public class Map {
         Main.listeners.add(c -> {
             switch(Character.toLowerCase(c)) {
                 case 'w':
-                    return goUp();
+                    goUp();
+                    return true;
                 case 's':
-                    return goDown();
+                    goDown();
+                    return true;
                 case 'a':
-                    return goLeft();
+                    goLeft();
+                    return true;
                 case 'd':
-                    return goRight();
+                    goRight();
+                    return true;
                 case 'p':
                     return pickUpItem();
                 case 'o':
