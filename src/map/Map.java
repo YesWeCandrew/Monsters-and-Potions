@@ -45,7 +45,7 @@ public class Map {
 
      */
     private static GameObject[][] map;
-    static final String SAVE_FILE_PATH = "src//saves";
+    static final String SAVE_FILE_PATH = System.getProperty("user.dir")+"//src//saves";
     private static final String WALL_CHARACTER = String.valueOf(new Wall().getChar());
     private static final String VACANT_CHARACTER = "_";
     private static int X_SIZE;  // AKA number of columns/length
