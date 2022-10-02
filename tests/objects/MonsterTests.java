@@ -36,7 +36,7 @@ public class MonsterTests {
 
     @Test
     void actionOptionsTests() {
-        assertEquals("(A) Attack testMonster", testMonster.actionOptions(null, true));
+        assertEquals("(O) Attack testMonster", testMonster.actionOptions(null, true));
         assertEquals(" to face testMonster", testMonster.actionOptions(null, false));
     }
 }
