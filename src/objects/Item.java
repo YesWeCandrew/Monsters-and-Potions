@@ -79,17 +79,6 @@ public class Item extends GameObject {
     @Override
     public String actionOptions(Hero hero, boolean isFacing) {
         if (isFacing) {
-            Main.listeners.add(c -> {
-                boolean caught = false;
-                if(Character.toLowerCase(c) == 'p') {
-                    if(hero != null) {
-                        hero.pickUpItem(this);
-                        caught = true;
-                    }
-                }
-
-                return caught;
-            });
             return "(P) Pick up " + getName() + " - " + getDescription();
         }
         else {
