@@ -1,0 +1,88 @@
+[
+  {
+    "hero": {
+      "escaped": null,
+      "item0": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 10,
+          "name": "Health Potion",
+          "description": "Increases health by 10",
+          "charRepresentation": "$"
+        }
+      },
+      "healthPoints": 50,
+      "name": "The Hero",
+      "description": "The hero is a hero.",
+      "positionX": 6,
+      "positionY": 8,
+      "phrases": null,
+      "charRepresentation": "H",
+      "attackPoints": 10,
+      "cardinality": "NORTH"
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 45,
+      "name": "Demonspawn",
+      "description": "Will hurt you! Better be prepared.",
+      "positionX": 5,
+      "positionY": 1,
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 10,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 5,
+          "name": "Amulet",
+          "description": "Win the game!",
+          "charRepresentation": "%"
+        }
+      }
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 100,
+      "name": "Big Greg",
+      "description": "Just a sloth. Harmless, but be afraid.",
+      "positionX": 14,
+      "positionY": 15,
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 5,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 1,
+          "name": "Desperateness",
+          "description": "Use when desperate!",
+          "charRepresentation": "G"
+        }
+      }
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 1000,
+      "name": "Thomas",
+      "description": "A Thomas. Unbeatable.",
+      "positionX": 21,
+      "positionY": 21,
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 1000,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 1,
+          "name": "Desperateness",
+          "description": "Use when desperate!",
+          "charRepresentation": "T"
+        }
+      }
+    }
+  }
+]
