@@ -50,7 +50,7 @@ public class StatisticsBar extends Element {
     }
 
     /**
-     * sets a listener which can get a value
+     * Sets a listener which can get a value
      *
      * @param listener which defines the function to retrieve the current value the statistics bar should represent
      */

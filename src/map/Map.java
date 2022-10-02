@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static main.Main.scanner;
+import static main.Menu.*;
+
 public class Map {
 
     /**
@@ -129,7 +132,7 @@ public class Map {
     }
 
     private static GameObject[][] initialiseBoard(int sizeX, int sizeY){
-        return new GameObject[sizeX][sizeY];
+        return new GameObject[sizeY][sizeX];
     }
 
     /**
@@ -178,7 +181,7 @@ public class Map {
         //Declare restricted size of the map
         // TODO: 2021-09-28  make this dynamic
         obtainYSize(pathToCSV);
-        GameObject[][] returnMap = initialiseBoard(Y_SIZE,X_SIZE);
+        GameObject[][] returnMap = initialiseBoard(X_SIZE,Y_SIZE);
 
         //Initialise parameters for csv file
         String line;
@@ -466,20 +469,19 @@ public class Map {
 
                 // TODO: 24/09/2022   switch statement this
                 //CASE: Hero
-                if (map[j][i] instanceof Hero) {
-                 hero = (Hero) map[j][i];
-                 heroPosition = new Position(i, j);
+                if (map[i][j] instanceof Hero) {
+                    hero = (Hero) map[i][j];
+                    heroPosition = new Position(j, i);
                 }
                 //CASE: Monster
-                else if (map[j][i] instanceof Monster) {
-                    monsters.add((Monster) map[j][i]);
-                  monsterPositions.add(new Position(j,i));
+                else if (map[i][j] instanceof Monster) {
+                    monsters.add((Monster) map[i][j]);
+                    monsterPositions.add(new Position(i,j));
                 }
                 //CASE: Item:
-                else if (map[j][i] instanceof Item) {
-                    Item item = (Item) map[j][i];
-                    itemsOnBoard.add(item);
-                    itemPositions.add(new Position(j,i));
+                else if (map[i][j] instanceof Item) {
+                    itemsOnBoard.add((Item) map[i][j]);
+                    itemPositions.add(new Position(i,j));
                 }
                 // TODO CASE: Empty??
             }
@@ -595,20 +597,36 @@ public class Map {
         return jsonMonster;
     }
 
-    private static JSONObject createJSONItem(Item item, Position position){
+    private static JSONObject createJSONItem(Item item, Position position) {
         JSONObject itemAttributes = new JSONObject();
+
+        if (item == null) {
+            itemAttributes.put("position", null);
+            itemAttributes.put("charRepresentation", null);
+            itemAttributes.put("name", null);
+            itemAttributes.put("description", null);
+            itemAttributes.put("actionEffects", null);
+            itemAttributes.put("actionChange", null);
+
+            JSONObject jsonItem = new JSONObject();
+            String itemPlaceHolder = "item";
+            jsonItem.put(itemPlaceHolder, itemAttributes);
+
+            return jsonItem;
+        }
+
         if (position != null)
-            itemAttributes.put("position",position.getX() + ", "+ position.getY());
-        itemAttributes.put("charRepresentation",String.valueOf(item.getChar()));
-        itemAttributes.put("name",item.getName());
-        itemAttributes.put("description",item.getDescription());
-        itemAttributes.put("actionEffects",item.getActionEffect().toString());
-        itemAttributes.put("actionChange",item.getActionChange());
+            itemAttributes.put("position", position.getX() + ", "+ position.getY());
+        itemAttributes.put("charRepresentation", String.valueOf(item.getChar()));
+        itemAttributes.put("name", item.getName());
+        itemAttributes.put("description", item.getDescription());
+        itemAttributes.put("actionEffects", item.getActionEffect().toString());
+        itemAttributes.put("actionChange", item.getActionChange());
 
         //Construct the nested item JSON Object.
         JSONObject jsonItem = new JSONObject();
         String itemPlaceHolder = "item";
-        jsonItem.put(itemPlaceHolder,itemAttributes);
+        jsonItem.put(itemPlaceHolder, itemAttributes);
 
         return jsonItem;
     }
@@ -1048,10 +1066,18 @@ public class Map {
                     return discardItem(2);
                 case '4':
                     return discardItem(3);
+                case 'q':
+                    System.out.println("Please enter a save name: ");
+                    String userSaveName = scanner.next();
+                    if (userSaveName == null || userSaveName.isBlank()) {
+                        save(123,"save");
+                    } else {
+                        save(123, userSaveName);
+                    }
+
+                    Main.main(new String[]{});
                 default:
                     return false;
-
-
             }
         });
 

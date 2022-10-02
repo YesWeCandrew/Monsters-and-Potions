@@ -57,36 +57,36 @@ public class PositionTests {
     @Test
     void Actions_NORTH_ReturnUpString() {
         String result = Position.actions(Cardinality.NORTH, "Move");
-        assertEquals("(↑) Move up", result);
+        assertEquals("(W) Move up", result);
 
         result = Position.actions(Cardinality.NORTH, "Face");
-        assertEquals("(↑) Face up", result);
+        assertEquals("(W) Face up", result);
     }
 
     @Test
     void Actions_SOUTH_ReturnUpString() {
         String result = Position.actions(Cardinality.SOUTH, "Move");
-        assertEquals("(↓) Move down", result);
+        assertEquals("(S) Move down", result);
 
         result = Position.actions(Cardinality.SOUTH, "Face");
-        assertEquals("(↓) Face down", result);
+        assertEquals("(S) Face down", result);
     }
 
     @Test
     void Actions_EAST_ReturnUpString() {
         String result = Position.actions(Cardinality.EAST, "Move");
-        assertEquals("(→) Move right", result);
+        assertEquals("(D) Move right", result);
 
         result = Position.actions(Cardinality.EAST, "Face");
-        assertEquals("(→) Face right", result);
+        assertEquals("(D) Face right", result);
     }
 
     @Test
     void Actions_WEST_ReturnUpString() {
         String result = Position.actions(Cardinality.WEST, "Move");
-        assertEquals("(←) Move left", result);
+        assertEquals("(A) Move left", result);
 
         result = Position.actions(Cardinality.WEST, "Face");
-        assertEquals("(←) Face left", result);
+        assertEquals("(A) Face left", result);
     }
 }

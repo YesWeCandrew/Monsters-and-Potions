@@ -5,6 +5,8 @@ import map.Map;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import static main.Main.scanner;
+
 public class Menu {
     private static final String DEFAULT_CSV = "dummySave";
     private static final String DEFAULT_JSON = "56-anotherSave";
@@ -121,6 +123,7 @@ public class Menu {
 
     /**
      * Displays the title sequence, including general instructions.
+     *
      * @author Andrew Howes
      */
     public static void titleSequence() {
@@ -158,7 +161,7 @@ public class Menu {
     public static Map displayOptionsAndChooseMap() {
         System.out.println(CHOOSE_INSTRUCTIONS);
 
-        String s = Main.scanner.nextLine();
+        String s = scanner.nextLine();
 
         if (s == null) {return tryOptionsAgain("Invalid input, try again");}
         else if (s.length() == 0) {return tryOptionsAgain("Invalid input, try again");}
@@ -193,14 +196,12 @@ public class Menu {
     public static Map loadGame() {
         System.out.println("Type the name of the CSV file you want to load");
 
-        Scanner in = new Scanner(System.in);
-        String csv = in.nextLine();
+        String csv = scanner.nextLine();
 
         System.out.println("Type the name of the JSON file you want to load");
-        String json = in.nextLine();
+        String json = scanner.nextLine();
 
         System.out.println("Loading...");
-        in.close();
 
         // in case people enter the filename.csv
         if (csv.endsWith(".csv") || csv.endsWith(".CSV")) {
@@ -216,6 +217,7 @@ public class Menu {
 
     /**
      * Displays detailed game instructions to the user and lets them return
+     *
      * @author Andrew Howes
      */
     public static Map displayInstructions() {
@@ -226,5 +228,4 @@ public class Menu {
 
         return Menu.tryOptionsAgain("Choose from the options below.");
     }
-
 }
