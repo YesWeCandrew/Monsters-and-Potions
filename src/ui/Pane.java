@@ -8,10 +8,26 @@ public class Pane extends Element {
     // in render order (first is rendered first)
     ArrayList<Element> elementsOrder = new ArrayList<Element>();
 
+    /**
+     * a Pane element with an allocated size to display, the pane allows the display of multiple elements arranged at
+     * different places within the panes relative coordinate space, and can render all elements and its self to a
+     * String array
+     *
+     * @param width the width of the pane
+     * @param height the width of the pane
+     * @author Mitchell Barker
+     */
     public Pane(int width, int height) {
         super(width, height);
     }
 
+    /**
+     * a Pane element with undefined width and height, which will be determined when rendering the pane element to the
+     * console by finding the minimum required size to display all elements within the pane given there current sizes
+     * and positions
+     *
+     * @author Mitchell Barker
+     */
     public Pane() {
         super(-1, -1);
     }
@@ -26,6 +42,10 @@ public class Pane extends Element {
 
     public void removeElement(Element element) {
         elementsOrder.remove(element);
+    }
+
+    public void clearElements() {
+        elementsOrder.clear();
     }
 
     public int getElementsSize() {
@@ -84,6 +104,7 @@ public class Pane extends Element {
      * @param insert the string to be inserted
      * @param index the index of the original string which the first inserted string character will overwrite
      * @return the original string with the inserted string overwritten over it at an index
+     * @author Mitchell Barker
      */
     private String insertString(String original, String insert, int index) {
         int insertLength = Math.min(original.length() - index, insert.length());
@@ -99,6 +120,7 @@ public class Pane extends Element {
      * @param x coordinate x
      * @param y coordinate y
      * @return the inserted array placed on the original array
+     * @author Mitchell Barker
      */
     private String[] insertStringArray(String[] original, String[] insert, int x, int y) {
         int i = 0;

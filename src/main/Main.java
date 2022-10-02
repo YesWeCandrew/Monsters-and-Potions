@@ -20,6 +20,7 @@ public class Main {
          * @param c the key that was input
          *
          * @return true if the key resulted in an action, false if it is ignored
+         * @author Mitchell Barker
          */
         boolean action(char c);
     }
@@ -77,46 +78,12 @@ public class Main {
         }
     }
 
-//    /**
-//     * example of keyboard input implementation
-//     *
-//     * @param args
-//     */
-//    public static void main(String... args) {
-//        listeners.add(c -> {
-//            switch(c) {
-//                case 'w':
-//                    System.out.println("moved up");
-//                    return true;
-//                case 's':
-//                    System.out.println("moved down");
-//                    return true;
-//                case 'a':
-//                    System.out.println("moved left");
-//                    return true;
-//                case 'd':
-//                    System.out.println("moved right");
-//                    return true;
-//                default:
-//                    return false;
-//            }
-//        });
-//
-//        System.out.println("display map");
-//        System.out.println();
-//        System.out.print("command input: ");
-//
-//        while(true) {
-//            if(getKeyEvent()) {
-//                for(int i = 0; i < 10; i++) System.out.println();
-//
-//                System.out.println("display map");
-//                System.out.println();
-//            }
-//            System.out.print("command input: ");
-//        }
-//    }
-
+    /**
+     * waits for a console input then, runs all key listeners
+     *
+     * @return true if a listener did an action given the input, otherwise false
+     * @author Mitchell Barker
+     */
     public static boolean getKeyEvent() {
         String s = scanner.next();
         boolean render = false;

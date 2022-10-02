@@ -7,7 +7,7 @@ public abstract class Element {
 
     /**
      * a tuple only used to get the maximized size of an element
-     *
+     * @author Mitchell Barker
      */
     protected class Bounds {
 
@@ -19,6 +19,15 @@ public abstract class Element {
         }
     }
 
+    /**
+     * fully defined element given the provided parameters
+     *
+     * @param x x coordinate (relative to the pane the element is placed on)
+     * @param y y coordinate (relative to the pane the element is placed on)
+     * @param width the width of the element
+     * @param height the height of the element
+     * @author Mitchell Barker
+     */
     public Element(int x, int y, int width, int height) {
         this.x = x;
         this.y = y;
@@ -26,15 +35,24 @@ public abstract class Element {
         this.height = height;
     }
 
+    /**
+     * constructs and element with provided width and height parameters, the elements position is defaulted to
+     * x = 0, y = 0, and can be adjusted later.
+     *
+     * @param width
+     * @param height
+     * @author Mitchell Barker
+     */
     public Element(int width, int height) {
         this(0, 0, width, height);
     }
 
     /**
-     * constructs and element with undefined width and height and a is positioned at x = 0, y = 0.
+     * constructs and element with undefined (-1) width and height and is positioned at x = 0, y = 0.
      * the width and height of this element could be defined later by the use of maximizeSize() function, which will at
      * least be called by a getStringRender() function in Pane class
      *
+     * @author Mitchell Barker
      */
     public Element() {
         this(0, 0, -1, -1);
@@ -81,8 +99,9 @@ public abstract class Element {
      * checks that each element string length is equal to the width attribute and the render's length is equal to the
      * height attribute
      *
-     * @param render
-     * @return
+     * @param render the string array render of this element
+     * @return true if the render size matches the width and height attributes of itself
+     * @author Mitchell Barker
      */
     private boolean checkRender(String[] render) {
         boolean valid = render.length == height && x >= 0 && y >= 0;
@@ -96,6 +115,7 @@ public abstract class Element {
     /**
      * sets the width and height to fit the minimum required size that can display the entire element
      *
+     * @author Mitchell Barker
      */
     public void maximizeSize() {
         Bounds b = getMaximizedSize();
@@ -108,6 +128,7 @@ public abstract class Element {
      * displayed on the console
      *
      * @return the string represented of the element
+     * @author Mitchell Barker
      */
     @Override
     public String toString() {
@@ -119,7 +140,8 @@ public abstract class Element {
      * if an element contains sub-elements to be rendered, then this method is the method to be called to
      * render the all sub-elements being arranged in an order
      *
-     * @return
+     * @return the string array representing each line to be displaced to the console
+     * @author Mitchell Barker
      */
     public abstract String[] getStringRender();
 
@@ -127,7 +149,8 @@ public abstract class Element {
      * returns a bounds object which returns the minimum size required for the element to be displayed in its entirety
      * this function is only called by the maximizeSize() function which is public.
      *
-     * @return
+     * @return a bounds object representing the width and height the element needs to be to display itself
+     * @author Mitchell Barker
      */
     protected abstract Bounds getMaximizedSize();
 }
