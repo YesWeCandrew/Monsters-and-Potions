@@ -64,7 +64,7 @@ public class TextList extends Element {
         boolean insertedAll = this.texts.length >= texts.size() + size;
         for(int i = size; i < Math.min(this.texts.length, texts.size() + size); i++) {
             TextField field = new TextField(getWidth(), 1);
-            field.setText(texts.get(i));
+            field.setText(texts.get(i - size));
 
             this.texts[i] = field;
             size++;

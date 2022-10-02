@@ -71,12 +71,23 @@ public class TextField extends Element {
      * @return
      */
     private String[] wrapText(String text) {
+        if(getWidth() == -1) {
+            String[] split = text.split(System.lineSeparator());
+            int maxWidth = 0;
+            for(String string : split) {
+                String[] spaceSplit = string.split(" ");
+                maxWidth = Math.max(maxWidth, string.length() + (spaceSplit.length <= 1 ? -1 : 0));
+            }
+
+            setWidth(maxWidth);
+        }
+
         ArrayList<String> wrapped = new ArrayList<>();
         wrapped.add("");
         String[] words = text.split(" ");
         int index = 0, length = 0;
         for(String word : words) {
-            if((length + word.length() + 1 > getWidth() && index < getHeight() && getWidth() != -1 && getHeight() != -1) || word.equals(System.lineSeparator())) {
+            if((length + word.length() + (wrapped.get(index).equals("") ? 0 : 1) > getWidth() && index < getHeight()) || word.equals(System.lineSeparator())) {
                 wrapped.set(index, wrapped.get(index) + (" ").repeat(getWidth() - length));
                 wrapped.add("");
                 length = 0;
