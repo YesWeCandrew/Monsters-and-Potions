@@ -9,7 +9,7 @@ import static main.Main.scanner;
 
 public class Menu {
     private static final String DEFAULT_CSV = "0-defaultgame";
-    private static final String DEFAULT_JSON = "56-anotherSave";
+    private static final String DEFAULT_JSON = "0-defaultgame";
 
     public static final String TITLE_1 =
         """

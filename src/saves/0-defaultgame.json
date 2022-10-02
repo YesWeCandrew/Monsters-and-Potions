@@ -1,1 +1,64 @@
-[{"hero":{"escaped":"false","item0":{"item":{"actionEffects":"health","actionChange":0,"name":"Fancy Health Potion","description":"Can kill and stab. its a good potion.","charRepresentation":"I"}},"healthPoints":100,"name":"Greg","positionFacingY":0,"description":null,"position":"2, 3","positionFacingX":0,"phrases":null,"charRepresentation":"H","attackPoints":50,"cardinality":"WEST"}},{"monster":{"healthPoints":30,"name":"The big monster","description":"A big monster","position":"4, 5","phrases":null,"charRepresentation":"M","attackPoints":40,"itemToDrop":null}},{"item":{"actionEffects":"attack","actionChange":50,"name":"Fancy Sword","description":"Can kill and stab. its a good sword.","position":"0, 1","charRepresentation":"I"}},{"item":{"actionEffects":"attack","actionChange":0,"name":"Fancy Sword","description":"Can kill and stab. its a good sword.","position":"4, 6","charRepresentation":"I"}}]
+[
+  {
+    "hero": {
+      "escaped": null,
+      "item0": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 10,
+          "name": "Health Potion",
+          "description": "Increases health by 10",
+          "charRepresentation": "$"
+        }
+      },
+      "healthPoints": 50,
+      "name": "The Hero",
+      "description": "The hero is a hero.",
+      "position": "6, 8",
+      "phrases": null,
+      "charRepresentation": "H",
+      "attackPoints": 10,
+      "cardinality": "NORTH"
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 45,
+      "name": "Demonspawn",
+      "description": "Will hurt you! Better be prepared.",
+      "position": "5, 1",
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 10,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 5,
+          "name": "Amulet",
+          "description": "Win the game!",
+          "charRepresentation": "%"
+        }
+      }
+    }
+  },
+  {
+    "monster": {
+      "healthPoints": 100,
+      "name": "Big Greg",
+      "description": "Just a sloth. Harmless, but be afraid.",
+      "position": "14, 15",
+      "phrases": null,
+      "charRepresentation": "^",
+      "attackPoints": 5,
+      "itemToDrop": {
+        "item": {
+          "actionEffects": "health",
+          "actionChange": 1,
+          "name": "Desperateness",
+          "description": "Use when desperate!",
+          "charRepresentation": "I"
+        }
+      }
+    }
+  }
+]
