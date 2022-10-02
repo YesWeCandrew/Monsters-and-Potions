@@ -9,19 +9,21 @@ public class TextField extends Element {
     String[] wrappedText = null;
 
     /**
+     * Simple text that can be placed in a Pane and displayed
      *
-     *
-     * @param textMaxWidth
-     * @param lineNum
+     * @param textMaxWidth maximum text width (by characters)
+     * @param lineNum amount of line number allocated to the TextField
+     * @author Mitchell Barker
      */
     public TextField(int textMaxWidth, int lineNum) {
         super(textMaxWidth, lineNum);
     }
 
     /**
+     * Simple text that can be placed in a Pane and displayed
      *
-     *
-     * @param text
+     * @param text the text
+     * @author Mitchell Barker
      */
     public TextField(String text) {
         super();
@@ -65,10 +67,18 @@ public class TextField extends Element {
     }
 
     /**
+     * converts plane text to a String array, where each String element in the string array is of the same length,
+     * it does this by inserting spaces at the end of each line to fill in space if the proceeding word could not fit.
      *
+     * note: adding a System.lineSeparator() (separated by spaces as if it was a word) between two words will also
+     * create a new line (append a new string element) to the resulting wrapped text
      *
-     * @param text
-     * @return
+     * note: this method will approximate the width of the element and set the width if it is the default width of -1.
+     * it does this by getting the length of the greatest string separated by new lines.
+     *
+     * @param text the text to format
+     * @return the formatted text, each line representing a element of the array
+     * @author Mitchell Barker
      */
     private String[] wrapText(String text) {
         if(getWidth() == -1) {

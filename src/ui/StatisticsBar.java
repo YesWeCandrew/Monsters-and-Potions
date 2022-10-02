@@ -7,6 +7,18 @@ public class StatisticsBar extends Element {
     int min, max, value, barDivisor, maxWidth;
     char barValueChar, barEmptyChar;
 
+    /**
+     * simple statistics bar for displaying health and action points. displays the name, ratio and a bar representing
+     * the current value as compared to the maximum value
+     *
+     * @param field the statistic's name
+     * @param min minimum value
+     * @param max maximum value
+     * @param barDivisor the amount of points the bar character represents
+     * @param barValueChar the character that represents the bar
+     * @param barEmptyChar the character that represents the missing amount of points
+     * @author Mitchell Barker
+     */
     public StatisticsBar(String field, int min, int max, int barDivisor, char barValueChar, char barEmptyChar, int maxWidth) {
         this.field = field;
         this.min = min;
@@ -17,6 +29,16 @@ public class StatisticsBar extends Element {
         this.maxWidth = maxWidth;
     }
 
+    /**
+     * simple statistics bar for displaying health and action points. displays the name and ratio of current points
+     * to maximum points
+     *
+     * @param field the statistic's name
+     * @param min minimum value
+     * @param max maximum value
+     * @param maxWidth the maximum width (in characters) of the statistics element when it is rendered
+     * @author Mitchell Barker
+     */
     public StatisticsBar(String field, int min, int max, int maxWidth) {
         this(field, min, max, 1, Character.MIN_VALUE, Character.MIN_VALUE, maxWidth);
     }
@@ -41,6 +63,7 @@ public class StatisticsBar extends Element {
      *
      * @param value the value to be set
      * @return true if the value was within the bounds, false if the value had to be adjusted to fit within the bounds
+     * @author Mitchell Barker
      */
     public boolean setValue(int value) {
         boolean inBounds = value >= min && value <= max;
@@ -53,6 +76,7 @@ public class StatisticsBar extends Element {
      * Sets a listener which can get a value
      *
      * @param listener which defines the function to retrieve the current value the statistics bar should represent
+     * @author Mitchell Barker
      */
     public void setListener(Listener<Integer> listener) {
         this.listener = listener;
@@ -68,6 +92,7 @@ public class StatisticsBar extends Element {
      * "(56/100)" or "(14/100)"
      *
      * @return the string ratio of the value and the max value
+     * @author Mitchell Barker
      */
     private String getRatio() {
         return "(" + value + "/" + max + ")";
@@ -78,6 +103,7 @@ public class StatisticsBar extends Element {
      * when the object was created, the 
      *
      * @return the string representation of the visual bar
+     * @author Mitchell Barker
      */
     private String getBar() {
         String bar = "";
