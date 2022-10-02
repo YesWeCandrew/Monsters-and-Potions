@@ -83,15 +83,15 @@ public class Menu {
             ACTIONS:
             
             You play the Hero who can move through the maze using the arrow keys:
-            ↑   |   Move or face up
-            →   |   Move or face right
-            ↓   |   Move or face down
-            ←   |   Move of face left
+            W   |   Move or face up
+            D   |   Move or face right
+            S   |   Move or face down
+            A   |   Move of face left
             
             When you are facing a monster or an item, you will see additional keys
             keys that you can press:
             P   |   Pick up the item in front of you
-            A   |   Attack the monster in front of you
+            O   |   Attack the monster in front of you
             
             Picking up an item will immediately apply its effects. Discarding the
             item will undo its effects. You can only hold four items at a time, so

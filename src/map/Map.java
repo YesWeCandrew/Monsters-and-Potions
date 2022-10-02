@@ -794,7 +794,11 @@ public class Map {
      * @return whether the position is on the board and empty
      */
     public boolean isEmpty(Position position) {
-        return !hasObject(position);
+        return !hasObject(position) && isOnBoard(position);
+        // isOnBoard is not redundant as hasObject will return false when a
+        // position is off the board, so !hasObject will return true but if this
+        // function is given a position that is off the board it should return
+        // false
     }
 
     /**
@@ -1024,15 +1028,33 @@ public class Map {
         Main.listeners.add(c -> {
             switch(Character.toLowerCase(c)) {
                 case 'w':
-                    return goUp();
+                    goUp();
+                    return true;
                 case 's':
-                    return goDown();
+                    goDown();
+                    return true;
                 case 'a':
-                    return goLeft();
+                    goLeft();
+                    return true;
                 case 'd':
-                    return goRight();
+                    goRight();
+                    return true;
+                case 'p':
+                    return pickUpItem();
+                case 'o':
+                    return attack();
+                case '1':
+                    return discardItem(0);
+                case '2':
+                    return discardItem(1);
+                case '3':
+                    return discardItem(2);
+                case '4':
+                    return discardItem(3);
                 default:
                     return false;
+
+
             }
         });
 

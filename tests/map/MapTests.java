@@ -111,11 +111,11 @@ public class MapTests {
         testMap.attack();
         String allPos6 = testMap.allPossibleActions().toString();
 
-        String expected1 = "[(P) Pick up Potion - Increases health by 10, (→) Turn right to face Demonspawn, (↓) Move down]";
-        String expected2 = "[(↑) Turn up to face Potion, (A) Attack Demonspawn, (↓) Move down]";
-        String expected3 = "[(↑) Move up]";
-        String expected5 = "[(↑) Move up, (→) Turn right to face Demonspawn, (↓) Move down]";
-        String expected6 = "[(↑) Move up, (P) Pick up Amulet - Win the game!, (↓) Move down]";
+        String expected1 = "[(P) Pick up Potion - Increases health by 10, (D) Turn right to face Demonspawn, (S) Move down]";
+        String expected2 = "[(W) Turn up to face Potion, (O) Attack Demonspawn, (S) Move down]";
+        String expected3 = "[(W) Move up]";
+        String expected5 = "[(W) Move up, (D) Turn right to face Demonspawn, (S) Move down]";
+        String expected6 = "[(W) Move up, (P) Pick up Amulet - Win the game!, (S) Move down]";
 
         assertEquals(expected1,allPos1);
         assertEquals(expected2,allPos2);

@@ -45,7 +45,7 @@ public class Monster extends LivingGameObject{
 
                 return caught;
             });
-            return "(A) Attack " + getName();
+            return "(O) Attack " + getName();
         }
         else {
             return " to face " + getName();
