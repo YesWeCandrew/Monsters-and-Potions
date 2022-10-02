@@ -51,8 +51,6 @@ public class Map {
     private static int X_SIZE;  // AKA number of columns/length
     private static int Y_SIZE; // AKA number of rows/height
 
-//<<<<<<< src/map/Map.java
-
 
     public static void main(String[] args) {
         loadXANDYSize("dummySave");
@@ -688,11 +686,11 @@ public class Map {
     }
 
     public int getWidth() {
-        return map.length;
+        return map[0].length;
     }
 
     public int getHeight() {
-        return map[0].length;
+        return map.length;
     }
 
     public static Position getHeroPositionReference() {
