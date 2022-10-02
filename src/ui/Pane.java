@@ -28,6 +28,10 @@ public class Pane extends Element {
         elementsOrder.remove(element);
     }
 
+    public void clearElements() {
+        elementsOrder.clear();
+    }
+
     public int getElementsSize() {
         return elementsOrder.size();
     }
