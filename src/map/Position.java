@@ -65,10 +65,10 @@ public class Position {
      */
     public static String actions(Cardinality cardinality, String action) {
         switch (cardinality) {
-            case NORTH -> { return "(↑) "+action+" up"; }
-            case EAST -> { return "(→) "+action+" right"; }
-            case SOUTH -> { return "(↓) "+action+" down"; }
-            case WEST -> { return "(←) "+action+" left"; }
+            case NORTH -> { return "(W) "+action+" up"; }
+            case EAST -> { return "(D) "+action+" right"; }
+            case SOUTH -> { return "(S) "+action+" down"; }
+            case WEST -> { return "(A) "+action+" left"; }
             default -> { return null; }
         }
     }
