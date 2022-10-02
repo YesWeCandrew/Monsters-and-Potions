@@ -9,10 +9,11 @@ public class TextList extends Element {
     int size, maxSize, maxWidth;
 
     /**
+     * a vertical list of TextFields that are exclusively one line height
      *
-     *
-     * @param maxSize
-     * @param maxWidth
+     * @param maxSize the max number of texts, also the max line numbers occupied by the TextList
+     * @param maxWidth the max width of each element of the TextList
+     * @author Mitchell Barker
      */
     public TextList(int maxSize, int maxWidth) {
         super();
@@ -31,11 +32,12 @@ public class TextList extends Element {
     }
 
     /**
+     * adds the provided text at the provided index, shifting all elements tot he right of the index left by one.
      *
-     *
-     * @param index
-     * @param text
-     * @return
+     * @param index the index of the inserted text
+     * @param text the text
+     * @return true if the text was added, false if not (index out of bounds or TextsList is full)
+     * @author Mitchell Barker
      */
     public boolean addText(int index, String text) {
         boolean inserted = false;
@@ -55,10 +57,11 @@ public class TextList extends Element {
     }
 
     /**
+     * appends the provided texts to the end of the array, will stop appending if the array is full
      *
-     *
-     * @param texts
-     * @return
+     * @param texts the texts to be appended
+     * @return true if all texts could be appended, otherwise false
+     * @author Mitchell Barker
      */
     public boolean addAllText(ArrayList<String> texts) {
         boolean insertedAll = this.texts.length >= texts.size() + size;
@@ -74,10 +77,14 @@ public class TextList extends Element {
     }
 
     /**
+     * removes the text at the index, shifting each proceeding text the the left by one. if the index is out of bounds
+     * the the function returns false, otherwise true.
      *
+     * note: will return true regardless of whether the value is null or not (i.e. size < index < maxSize)
      *
-     * @param index
-     * @return
+     * @param index the index of the text in the TextList to be removed
+     * @return false if index is inbounds, other true
+     * @author Mitchell Barker
      */
     public boolean removeText(int index) {
         boolean removed = false;
@@ -98,21 +105,19 @@ public class TextList extends Element {
     }
 
     /**
+     * checks if the index is in the bounds of the TextList array (i.e. 0 <= index < maxSize)
      *
+     * note: function will return true regardless of whether the element at index is null or not
+     * (i.e size < index < maxSize)
      *
-     * @param index
-     * @return
+     * @param index the index to check
+     * @return if the index provided is within the max bounds
+     * @author Mitchell Barker
      */
     private boolean inBounds(int index) {
         return index >= 0 && index < texts.length;
     }
 
-    /**
-     *
-     *
-     * @param index
-     * @return
-     */
     public TextField getTextField(int index) {
         return index < texts.length && index >= 0 ? texts[index] : null;
     }

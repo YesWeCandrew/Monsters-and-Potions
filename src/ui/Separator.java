@@ -12,6 +12,7 @@ public class Separator extends Element {
      * @param length the length of a separator
      * @param horizontal whether the separator is horizontal or vertical
      * @param character the separator character which will be displayed
+     * @author Mitchell Barker
      */
     public Separator(int length, boolean horizontal, char character) {
         this.length = length;
