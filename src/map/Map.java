@@ -761,6 +761,7 @@ public class Map {
      */
     private boolean isOnBoard(Position position) {
         return (position.getX() < X_SIZE &&
+                position.getY() < Y_SIZE &&
                 position.getX() >= 0 &&
                 position.getY() >= 0);
     }
@@ -1028,17 +1029,13 @@ public class Map {
         Main.listeners.add(c -> {
             switch(Character.toLowerCase(c)) {
                 case 'w':
-                    goUp();
-                    return true;
+                    return goUp();
                 case 's':
-                    goDown();
-                    return true;
+                    return goDown();
                 case 'a':
-                    goLeft();
-                    return true;
+                    return goLeft();
                 case 'd':
-                    goRight();
-                    return true;
+                    return goRight();
                 case 'p':
                     return pickUpItem();
                 case 'o':
