@@ -15,9 +15,10 @@ public class Main {
     public interface KeyListener {
 
         /**
-         * completes some action given the key
+         * Completes some action given the key
          *
          * @param c the key that was input
+         *
          * @return true if the key resulted in an action, false if it is ignored
          */
         boolean action(char c);
@@ -26,8 +27,10 @@ public class Main {
     /**
      * Runs a title sequence, lets the user view instructions or load a game
      * Then creates the Map and the Interface
-     * @param args none
+     *
      * @author Andrew Howes
+     *
+     * @param args none
      */
     public static void main(String[] args) {
 

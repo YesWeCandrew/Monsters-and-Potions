@@ -90,7 +90,7 @@ public class TextField extends Element {
             }
         }
 
-        if(getWidth() != -1) {
+        if(getWidth() != -1 && length < getWidth()) {
             wrapped.set(index, wrapped.get(index) + (" ").repeat(getWidth() - length));
         }
 
