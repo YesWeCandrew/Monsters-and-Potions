@@ -1,7 +1,7 @@
 # Group Assignment 2 - COMP2120
 
-The repository for group assignment 2 COMP2120
-https://comp.anu.edu.au/courses/comp2120/assignments/group-assignment2/
+The repo contains a group assignment for COMP2120 - Software Construction. This assignmnet required our group to develop a simple text-based role-playing roguelike game in Java.
 
-----
-Google Doc link: https://docs.google.com/document/d/1HPSQNirlqqqNSbKI7eH-nacumCqDT_BMp_LPt_c5Zcs/edit
+Our game is played in the terminal and involves navigating a hero through a maze that contains Monsters, Potions and Items. The game ends when the hero finds the Magic Amulet.
+
+This assignment demonstrates our ability to use Agile methodology to create an application. We created user stories, developed these into Product Backlog Items, prioritised them and developed the in iterative sprints.
